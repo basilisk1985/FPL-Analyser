@@ -1,0 +1,67 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.logo {
+  width : 34px;
+  margin : 10px
+}
+
+.calculationCard {
+  margin:'2vh';
+  padding: '5vw 2vw';
+  font-size:'16px';
+  width: '100%';
+  border:3px solid #61dafb;
+  border-radius: 10px;
+  background-color: #666;
+  color:aliceblue
+}
+.priceTag {
+  font-size : 34px;
+  font-weight: 600;
+  margin : 10px
+}
+.percentTag {
+  font-size : 16px;
+  font-weight: 300;
+  margin : 5px;
+  color:#61dafb
+}
+
+.App-header {
+  /* background-color: #282c34; */
+  padding-top: 5vw;
+  padding-bottom: 3vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,8 @@
+.p-autocomplete-panel {
+  background-color: white;
+}
+.p-autocomplete-item {
+  margin-bottom: 0.5vh;
+  font-size: 14px;
+  font-weight: 400;
+}
