@@ -5,17 +5,17 @@ import Grid from '@mui/material/Grid2'
 // import { Autocomplete } from '@mui/material';
 // import AutoComplete from './modules/AutoCompleteField1';
 import   AutoComplete   from './modules/PrimeAutoComplete';        
-import { dateNormaliser,priceNormaliser,noNormaliser, sampleResult, emptyDataStructure, headers } from './modules/constants';
+import { dateNormaliser,priceNormaliser,noNormaliser, allCapital, emptyDataStructure, headers } from './modules/constants';
 import {coinList} from './modules/sampleData'
 
 
 class HomePage extends Component{
 
 state={
-        ids:[null,null,null,null] ,
+        ids:[null, null, null, null, null] ,
         coinsList:[{}], 
         inProgress:false, 
-        data :[emptyDataStructure,emptyDataStructure, emptyDataStructure, emptyDataStructure],
+        data :[emptyDataStructure,emptyDataStructure, emptyDataStructure, emptyDataStructure, emptyDataStructure],
         radioButtonValue: "Option 1"
 }
 
@@ -71,7 +71,8 @@ fetchCoinId = (sym = '')=>{
       const col2 = header == "Market Cap" && coinDetails[1][h] && coinDetails[1]["fully_diluted_valuation"] ? marketCapWithPercent(coinDetails[1][h],coinDetails[1]["fully_diluted_valuation"]) : coinDetails[1][h];
       const col3 = header == "Market Cap" && coinDetails[2][h] && coinDetails[2]["fully_diluted_valuation"] ? marketCapWithPercent(coinDetails[2][h],coinDetails[2]["fully_diluted_valuation"]) : coinDetails[2][h];
       const col4 = header == "Market Cap" && coinDetails[3][h] && coinDetails[3]["fully_diluted_valuation"] ? marketCapWithPercent(coinDetails[3][h],coinDetails[3]["fully_diluted_valuation"]) : coinDetails[3][h];
-      const row =[header, col1, col2, col3, col4]
+      const col5 = header == "Market Cap" && coinDetails[4][h] && coinDetails[4]["fully_diluted_valuation"] ? marketCapWithPercent(coinDetails[4][h],coinDetails[4]["fully_diluted_valuation"]) : coinDetails[4][h];
+      const row =[header, col1, col2, col3, col4, col5]
       return (result.push(row))
 
 
@@ -87,13 +88,14 @@ fetchCoinId = (sym = '')=>{
   }
 
   tableCreator =(data)=>  { 
+  console.log("🚀 ~ HomePage ~ data:", data)
 
     const {coinsList} = this.state
-    // const coinOptions = coinsList.map(c=>c.name)
     const coinOptions = coinsList.map(c=>({item: c.symbol, description: c.name}))
 
 
     const normalisers ={
+      [headers.symbol]: allCapital,
       [headers.current_price]: priceNormaliser,
       [headers.market_cap]: priceNormaliser,
       [headers.fully_diluted_valuation]: priceNormaliser,
@@ -160,6 +162,9 @@ fetchCoinId = (sym = '')=>{
               </td>
               <td style={headerStyle}>
                 <AutoComplete id='id4' placeholder='Source Coin' callback ={(e) => this.inputFieldChangeHandler(3,e)}  items={coinOptions} />         
+              </td>
+              <td style={headerStyle}>
+                <AutoComplete id='id5' placeholder='Source Coin' callback ={(e) => this.inputFieldChangeHandler(4,e)}  items={coinOptions} />         
               </td>
           </tr>
         </thead>

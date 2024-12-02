@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import './App.css';
 import CoinCompare from './views/CoinCompare'
-import CoinsDetails from './views/CoinsDetails'
+// import CoinsDetails from './views/CoinsDetails'
+import CoinsDetailsDynamic from './views/CoinsDetailsDynamic'
 // import Test from './views/modules/PrimeAutoComplete'
 
 function App() {
-  const [activeView, setActiveView] = useState("2");
+  const [activeView, setActiveView] = useState("3");
 
   const renderView = () => {
     switch (activeView) {
       case "1":
         return  <CoinCompare/>;
-      case "2":
-        return <CoinsDetails/>;
+      // case "2":
+      //   return <CoinsDetails/>;
       case "3":
-        return <div>Our Services: We offer awesome services!</div>;
+        return <CoinsDetailsDynamic/>;
       case "4":
         return <div>Contact Us: Reach out at info@example.com.</div>;
       default:
@@ -30,11 +31,11 @@ function App() {
         <button style={styles.navButton} onClick={() => setActiveView("1")}>
           Coin Compare
         </button>
-        <button style={styles.navButton} onClick={() => setActiveView("2")}>
+        {/* <button style={styles.navButton} onClick={() => setActiveView("2")}>
           Coin Details
-        </button>
+        </button> */}
         <button style={styles.navButton} onClick={() => setActiveView("3")}>
-          Services
+          Dynamic Coin Details
         </button>
         <button style={styles.navButton} onClick={() => setActiveView("4")}>
           Contact

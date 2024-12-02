@@ -11,6 +11,8 @@ const dateNormaliser =(d) =>{
      }
  
 const priceNormaliser= (p) => p&& p!==0? "$"+noNormaliser(p):""
+
+const allCapital= (p) => p && typeof p =='string' ? p.toUpperCase() :""
  
 const noNormaliser= (p) => 
           typeof p ==='number' && p<1 ? p.toPrecision(6):
@@ -121,7 +123,7 @@ const emptyDataStructure = {
       "circulating_supply": "Circulating Supply",
       "total_supply": "Total Supply",
       "max_supply": "Max Supply",
-      "price_change_24h": "Price Change 24h",
+      // "price_change_24h": "Price Change 24h",
       "ath": "ATH",
       "ath_change_percentage": "ATH Change Percentage",
       "ath_date": "ATH Date",
@@ -131,4 +133,4 @@ const emptyDataStructure = {
     }
 
 
-export {dateNormaliser,priceNormaliser,noNormaliser,sampleResult,emptyDataStructure, headers}
+export {dateNormaliser,priceNormaliser,noNormaliser, allCapital,sampleResult,emptyDataStructure, headers}

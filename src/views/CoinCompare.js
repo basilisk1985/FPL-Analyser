@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid2'
 // import { Autocomplete } from '@mui/material';
 // import AutoComplete from './modules/AutoCompleteField1';
 import   AutoComplete   from './modules/PrimeAutoComplete';        
-import { dateNormaliser,priceNormaliser,noNormaliser, sampleResult, emptyDataStructure, headers } from './modules/constants';
+import { dateNormaliser,priceNormaliser,noNormaliser, allCapital, emptyDataStructure, headers } from './modules/constants';
 import {coinList} from './modules/sampleData'
 
 
@@ -87,6 +87,7 @@ fetchCoinId = (sym = '')=>{
   tableCreator =(data)=>  { 
 
     const normalisers ={
+      [headers.symbol]: allCapital,
       [headers.current_price]: priceNormaliser,
       [headers.market_cap]: priceNormaliser,
       [headers.fully_diluted_valuation]: priceNormaliser,
@@ -200,7 +201,7 @@ fetchCoinId = (sym = '')=>{
     const table =
       <div style={{marginTop:'2vh', minWidth:'60vw'}}>
       <Grid container justifyContent={'center'} > 
-        <Grid item>
+        <Grid>
           {coinsData && coinsData.length && this.tableCreator(this.tableDataCreator(coinsData))}
           </Grid>
         </Grid> 
@@ -253,10 +254,10 @@ fetchCoinId = (sym = '')=>{
 
 const CompareCoinArea = projectedPrice?
         <Grid  style={{marginTop:'2vh'}} className='calculationCard' spacing={3} container>  
-          <Grid item style ={{}}  size={{ xs: 12 }}>
+          <Grid  style ={{}}  size={{ xs: 12 }}>
             <p>{`${ids[0] && ids[0].toUpperCase()} price with the  market cap of ${ids[1] && ids[1].toUpperCase()}`}</p>
           </Grid>
-          <Grid item style ={{}}  size={{ xs: 12 }}>
+          <Grid  style ={{}}  size={{ xs: 12 }}>
             <Grid container minHeight={60} spacing={2} justifyContent="center" style ={{color:'white'}}>
               <Grid display="flex" justifyContent="center" alignItems="center" size={{}}>
                 <img className={'logo'} src={this.findDataByField(coinsData[0],'image')}/>   
@@ -268,11 +269,11 @@ const CompareCoinArea = projectedPrice?
               </Grid>
             </Grid>
           </Grid>
-          <Grid item style ={{}}  size={{ xs: 12 }}>
+          <Grid  style ={{}}  size={{ xs: 12 }}>
             <p style={{textAlign:"left", marginLeft:'4vw',marginBottom:'1vh'}} >{`${ids[0] && ids[0].toUpperCase()} mCap: ${priceNormaliser(currentMarketCap)}`}</p>
             <p style={{textAlign:"left", marginLeft:'4vw',marginTop:'1vh'}} >{`${ids[1] && ids[1].toUpperCase()} mCap: ${priceNormaliser(projectedMarketCap)}`}</p>
           </Grid>
-          <Grid item style ={{marginBottom:'2vh'}}  size={{ xs: 12 }}>
+          <Grid  style ={{marginBottom:'2vh'}}  size={{ xs: 12 }}>
             {radioButtonArea}
           </Grid>
         </Grid>:
@@ -282,21 +283,21 @@ const CompareCoinArea = projectedPrice?
     return (
       <div className="App">
         <Grid container justifyContent={'center'} spacing={5} style={{marginBottom:'5vh'}}>
-          <Grid item>
+          <Grid >
             <AutoComplete id='id1' placeholder='Source Coin' callback ={(e) => this.inputFieldChangeHandler(0,e)}  items={coinOptions} />         
           </Grid>
-          <Grid item>
+          <Grid >
             <AutoComplete id='id2' placeholder='Target Coin' callback ={(e) => this.inputFieldChangeHandler(1,e)}  items={coinOptions} />
           </Grid>
-          <Grid item justifyContent={'center'}>
+          <Grid  justifyContent={'center'}>
             <button disabled={this.state.inProgress} onClick={()=>this.fetchCoinDetails(this.state.ids)}>Compare</button>
           </Grid>
         </Grid>
         <Grid container justifyContent={'center'}>
-          <Grid item size={{ xs: 7 }} >
+          <Grid  size={{ xs: 7 }} >
             {table}
           </Grid>
-          <Grid item size={{ xs: 4 }}>
+          <Grid  size={{ xs: 4 }}>
             {CompareCoinArea}
           </Grid>
         </Grid>

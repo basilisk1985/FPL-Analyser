@@ -9,6 +9,7 @@ export const coinList =[
         "symbol": "zcn",
         "name": "Zus"
     },
+    
     {
         "id": "0dog",
         "symbol": "0dog",
