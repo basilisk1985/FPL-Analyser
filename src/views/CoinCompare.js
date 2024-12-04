@@ -175,7 +175,7 @@ fetchCoinId = (sym = '')=>{
           projectedPrice = parsedMarketCapratio * targetMarketCap/ circulatingSupply
         break
     }
-    const percent_change = 100*(projectedPrice-currentPrice)/currentPrice
+    const percent_change = 100*(projectedPrice)/currentPrice
     return ({projectedPrice, percent_change })
   }
 
@@ -294,10 +294,10 @@ const CompareCoinArea = projectedPrice?
           </Grid>
         </Grid>
         <Grid container justifyContent={'center'}>
-          <Grid  size={{ xs: 7 }} >
+          <Grid size={{ xs: 12 , lg:7}} >
             {table}
           </Grid>
-          <Grid  size={{ xs: 4 }}>
+          <Grid size={{ xs: 5 , lg:4}}>
             {CompareCoinArea}
           </Grid>
         </Grid>

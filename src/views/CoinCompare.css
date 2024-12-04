@@ -21,7 +21,7 @@
 .calculationCard {
   margin:'2vh';
   padding: '5vw 2vw';
-  font-size:'16px';
+  font-size:'2vw';
   width: '100%';
   border:3px solid #61dafb;
   border-radius: 10px;
@@ -29,12 +29,12 @@
   color:aliceblue
 }
 .priceTag {
-  font-size : 34px;
+  font-size : 3vw;
   font-weight: 600;
   margin : 10px
 }
 .percentTag {
-  font-size : 16px;
+  font-size : 1.5vw;
   font-weight: 300;
   margin : 5px;
   color:#61dafb
