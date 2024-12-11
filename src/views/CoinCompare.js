@@ -175,7 +175,7 @@ fetchCoinId = (sym = '')=>{
           projectedPrice = parsedMarketCapratio * targetMarketCap/ circulatingSupply
         break
     }
-    const percent_change = 100*(projectedPrice)/currentPrice
+    const percent_change = 100*(projectedPrice-currentPrice)/currentPrice
     return ({projectedPrice, percent_change })
   }
 
