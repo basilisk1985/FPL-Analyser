@@ -88,7 +88,8 @@ class HomePage extends Component {
       this.setState({ inProgress: true });
       axios
         .get(
-          "https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static"
+          // "https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static"
+          "https://fantasy.premierleague.com/api/bootstrap-static"
         )
         .then((response) => {
           const res = response.data || [];
