@@ -1,136 +1,274 @@
+const dateNormaliser = (d) => {
+  const date = new Date(d);
+  // Get day, month, and year components
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = date.getFullYear();
+  // Format as dd/mm/yyyy
+  const formattedDate = `${day}/${month}/${year}`;
+  return d ? formattedDate : "";
+};
 
-const dateNormaliser =(d) =>{
-       const date = new Date(d);
-       // Get day, month, and year components
-       const day = String(date.getDate()).padStart(2, '0');
-       const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-       const year = date.getFullYear();
-       // Format as dd/mm/yyyy
-       const formattedDate = `${day}/${month}/${year}`;
-       return d? formattedDate:""
-     }
- 
-const priceNormaliser= (p) => p&& p!==0? "$"+noNormaliser(p):""
+const priceNormaliser = (p) => (p && p !== 0 ? "$" + noNormaliser(p) : "");
 
-const allCapital= (p) => p && typeof p =='string' ? p.toUpperCase() :""
- 
-const noNormaliser= (p) => 
-          typeof p ==='number' && p<1 ? p.toPrecision(6):
-          (p>1 && p<1000) ? p.toFixed(2):
-          p>=1000000000 ? `${(parseFloat(p) / 1e9).toFixed(2) + ' B'}`:
-          p>=1000000 ? `${(parseFloat(p) / 1e6).toFixed(2) + ' M'}`:
-          p>=1000 ? p.toLocaleString():
-          p
+const allCapital = (p) => (p && typeof p == "string" ? p.toUpperCase() : "");
 
+const noNormaliser = (p) =>
+  typeof p === "number" && p < 1
+    ? p.toPrecision(6)
+    : p > 1 && p < 1000
+    ? p.toFixed(2)
+    : p >= 1000000000
+    ? `${(parseFloat(p) / 1e9).toFixed(2) + " B"}`
+    : p >= 1000000
+    ? `${(parseFloat(p) / 1e6).toFixed(2) + " M"}`
+    : p >= 1000
+    ? p.toLocaleString()
+    : p;
 
+// const emptyDataStructure = {
+//   "id": "",
+//   "symbol": "",
+//   "name": "",
+//   "image": "",
+//   "current_price": "",
+//   "market_cap": "",
+//   "market_cap_rank": "",
+//   "fully_diluted_valuation": "",
+//   "total_volume": "",
+//   "high_24h": "",
+//   "low_24h": "",
+//   "price_change_24h": "",
+//   "price_change_percentage_24h": "",
+//   "market_cap_change_24h": "",
+//   "market_cap_change_percentage_24h": "",
+//   "circulating_supply": "",
+//   "total_supply": "",
+//   "max_supply": "",
+//   "ath": "",
+//   "ath_change_percentage": "",
+//   "ath_date": "",
+//   "atl": "",
+//   "atl_change_percentage": "",
+//   "atl_date": "",
+//   "roi": "",
+//   "last_updated": ""
+// }
 
-const sampleResult=[
-          {
-              "id": "solana",
-              "symbol": "sol",
-              "name": "Solana",
-              "image": "https://coin-images.coingecko.com/coins/images/4128/large/solana.png?1718769756",
-              "current_price": 204.63,
-              "market_cap": 96989187708,
-              "market_cap_rank": 4,
-              "fully_diluted_valuation": 120891679810,
-              "total_volume": 13372566959,
-              "high_24h": 224.9,
-              "low_24h": 201.75,
-              "price_change_24h": -14.796779798957118,
-              "price_change_percentage_24h": -6.74341,
-              "market_cap_change_24h": -6386512940.371948,
-              "market_cap_change_percentage_24h": -6.17796,
-              "circulating_supply": 471905183.14672,
-              "total_supply": 588203815.802876,
-              "max_supply": null,
-              "ath": 259.96,
-              "ath_change_percentage": -20.61822,
-              "ath_date": "2021-11-06T21:54:35.825Z",
-              "atl": 0.500801,
-              "atl_change_percentage": 41106.02595,
-              "atl_date": "2020-05-11T19:35:23.449Z",
-              "roi": null,
-              "last_updated": "2024-11-13T06:32:25.709Z"
-          },
-          {
-              "id": "sui",
-              "symbol": "sui",
-              "name": "Sui",
-              "image": "https://coin-images.coingecko.com/coins/images/26375/large/sui-ocean-square.png?1727791290",
-              "current_price": 2.91,
-              "market_cap": 8352453710,
-              "market_cap_rank": 19,
-              "fully_diluted_valuation": 29350616421,
-              "total_volume": 1907028976,
-              "high_24h": 3.29,
-              "low_24h": 2.86,
-              "price_change_24h": -0.24153800570765638,
-              "price_change_percentage_24h": -7.67103,
-              "market_cap_change_24h": -643363767.4633446,
-              "market_cap_change_percentage_24h": -7.15181,
-              "circulating_supply": 2845750695.58389,
-              "total_supply": 10000000000.0,
-              "max_supply": 10000000000.0,
-              "ath": 3.3,
-              "ath_change_percentage": -10.3696,
-              "ath_date": "2024-11-11T15:15:44.705Z",
-              "atl": 0.364846,
-              "atl_change_percentage": 710.47077,
-              "atl_date": "2023-10-19T10:40:30.078Z",
-              "roi": null,
-              "last_updated": "2024-11-13T06:32:19.340Z"
-          }
-      ]
+const headerLabels = [
+  {
+    label: "Minutes played",
+    name: "minutes",
+  },
+  {
+    label: "Goals scored",
+    name: "goals_scored",
+  },
+  {
+    label: "Assists",
+    name: "assists",
+  },
+  {
+    label: "Clean sheets",
+    name: "clean_sheets",
+  },
+  {
+    label: "Goals conceded",
+    name: "goals_conceded",
+  },
+  {
+    label: "Own goals",
+    name: "own_goals",
+  },
+  {
+    label: "Penalties saved",
+    name: "penalties_saved",
+  },
+  {
+    label: "Penalties missed",
+    name: "penalties_missed",
+  },
+  {
+    label: "Yellow cards",
+    name: "yellow_cards",
+  },
+  {
+    label: "Red cards",
+    name: "red_cards",
+  },
+  {
+    label: "Saves",
+    name: "saves",
+  },
+  {
+    label: "Bonus",
+    name: "bonus",
+  },
+  {
+    label: "Bonus Points System",
+    name: "bps",
+  },
+  {
+    label: "Influence",
+    name: "influence",
+  },
+  {
+    label: "Creativity",
+    name: "creativity",
+  },
+  {
+    label: "Threat",
+    name: "threat",
+  },
+  {
+    label: "ICT Index",
+    name: "ict_index",
+  },
+  {
+    label: "Clearances, blocks and interceptions",
+    name: "clearances_blocks_interceptions",
+  },
+  {
+    label: "Recoveries",
+    name: "recoveries",
+  },
+  {
+    label: "Tackles",
+    name: "tackles",
+  },
+  {
+    label: "Defensive Contribution",
+    name: "defensive_contribution",
+  },
+  {
+    label: "Game(s) Started",
+    name: "starts",
+  },
+  {
+    label: "Expected Goals",
+    name: "expected_goals",
+  },
+  {
+    label: "Expected Assists",
+    name: "expected_assists",
+  },
+  {
+    label: "Expected Goal Involvements",
+    name: "expected_goal_involvements",
+  },
+  {
+    label: "Expected Goals Conceded",
+    name: "expected_goals_conceded",
+  },
+];
 
-const emptyDataStructure = {
-  "id": "",
-  "symbol": "",
-  "name": "",
-  "image": "",
-  "current_price": "",
-  "market_cap": "",
-  "market_cap_rank": "",
-  "fully_diluted_valuation": "",
-  "total_volume": "",
-  "high_24h": "",
-  "low_24h": "",
-  "price_change_24h": "",
-  "price_change_percentage_24h": "",
-  "market_cap_change_24h": "",
-  "market_cap_change_percentage_24h": "",
-  "circulating_supply": "",
-  "total_supply": "",
-  "max_supply": "",
-  "ath": "",
-  "ath_change_percentage": "",
-  "ath_date": "",
-  "atl": "",
-  "atl_change_percentage": "",
-  "atl_date": "",
-  "roi": "",
-  "last_updated": ""
-}
+const headers = {
+  // element_type : "Role" ,
+  web_name: "Player Name",
+  now_cost: "Cost",
+  now_cost_rank: "Cost Rank",
+  form: "Form",
+  form_rank: "Form Rank",
+  selected_by_percent: "Selected By",
+  selected_rank: "Selected Rank",
+  total_points: "Total Points",
+  event_points: "GW Point",
+  points_per_game: "Points P90",
+  points_per_game_rank: "Points P90 Rank",
+  goals_scored: "Goals scored",
+  assists: "Assists",
+  expected_goals: "Expected Goals",
+  expected_goals_per_90: "XG P90",
+  expected_goal_involvements: "Expected Goal Involvements",
+  expected_goal_involvements_per_90: "XGI P90",
+  expected_assists: "Expected Assists",
+  expected_assists_per_90: "XA P90",
+  bonus: "Bonus",
+  bps: "Bonus Points System",
+  ep_next: "Estimated Points",
+  ep_this: "Estimated Points This Week",
+  creativity: "Creativity",
+  creativity_rank: "Creativity Rank",
+  direct_freekicks_order: "Direct Freekicks",
+  corners_and_indirect_freekicks_order: "Direct Freekicks",
+  penalties_order: "Penalties Taken",
+  penalties_missed: "Penalties missed",
+  penalties_saved: "Penalties saved",
+  threat: "Threat",
+  threat_rank: "Threat Rank",
+  influence: "Influence",
+  influence_rank: "Influence Rank",
+  clean_sheets: "Clean sheets",
+  clean_sheets_per_90: "CS Per 90",
+  clearances_blocks_interceptions: "Clearances, blocks and interceptions",
+  defensive_contribution: "Defensive Contribution",
+  defensive_contribution_per_90: "Deffensive Contribution Per 90",
+  tackles: "Tackles",
+  recoveries: "Recoveries",
+  expected_goals_conceded: "Expected Goals Conceded",
+  expected_goals_conceded_per_90: "XGC P90",
+  ict_index: "ICT Index",
+  ict_index_rank: "ICT Rank",
+  own_goals: "Own goals",
+  goals_conceded: "Goals conceded",
+  goals_conceded_per_90: "Goals Conceded P90",
+  yellow_cards: "Yellow cards",
+  red_cards: "Red cards",
+  saves: "Saves",
+  saves_per_90: "Saves P90",
+  starts: "Game(s) Started",
+  minutes: "Minutes played",
+  team: "Team",
+  team_join_date: "Team Join Date",
+  birth_date: "Age",
+  chance_of_playing_next_round: "Playing Next Round",
+  transfers_in: "Transfers In",
+  transfers_in_event: "Transfers In GW",
+  transfers_out: "Trasnfers Out",
+  transfers_out_event: "Transfers Out GW",
+  // threat_rank_type : "" ,
+  // starts_per_90 : "Starts P90" ,
+  // selected_rank_type : "" ,
+  // has_temporary_code : "" ,
+  // ict_index_rank_type : "" ,
+  // form_rank_type : "" ,
+  // id : "" ,
+  // in_dreamteam : "" ,
+  // points_per_game_rank_type : "" ,
+  // code : "" ,
+  // chance_of_playing_this_round : "Playing This Round",
+  // cost_change_event : "" ,
+  // cost_change_event_fall : "" ,
+  // cost_change_start : "" ,
+  // cost_change_start_fall : "" ,
+  // creativity_rank_type : "" ,
+  // direct_freekicks_text : "" ,
+  // corners_and_indirect_freekicks_text : "" ,
+  // dreamteam_count : "" ,
+  // penalties_text : "" ,
+  // influence_rank_type : "" ,
+  // now_cost_rank_type : "" ,
+  // opta_code : "" ,
+  // news : "" ,
+  // news_added : "" ,
+  // photo : "" ,
+  // region : "" ,
+  // removed : "" ,
+  // second_name : "" ,
+  // special : "" ,
+  // squad_number : "" ,
+  // status : "" ,
+  // team_code : "Team Code" ,
+  // value_form : "" ,
+  // value_season : "" ,
+  // first_name : "Player Name" ,
+};
 
-    const headers ={
-      "image": "image",
-      "name": "Name",
-      "symbol": "Symbol",
-      "current_price": "Price",
-      "market_cap_rank": "Rank",
-      "market_cap": "Market Cap",
-      "fully_diluted_valuation": "FDV",
-      "circulating_supply": "Circulating Supply",
-      "total_supply": "Total Supply",
-      "max_supply": "Max Supply",
-      // "price_change_24h": "Price Change 24h",
-      "ath": "ATH",
-      "ath_change_percentage": "ATH Change Percentage",
-      "ath_date": "ATH Date",
-      "atl": "ATL",
-      "atl_change_percentage": "ATL Change Percentage",
-      "atl_date": "ATL Date"
-    }
-
-
-export {dateNormaliser,priceNormaliser,noNormaliser, allCapital,sampleResult,emptyDataStructure, headers}
+export {
+  dateNormaliser,
+  priceNormaliser,
+  noNormaliser,
+  allCapital,
+  headers,
+  headerLabels,
+};

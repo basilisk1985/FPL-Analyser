@@ -1,21 +1,15 @@
 import React, { useState } from "react";
 import './App.css';
-import CoinCompare from './views/CoinCompare'
-// import CoinsDetails from './views/CoinsDetails'
-import CoinsDetailsDynamic from './views/CoinsDetailsDynamic'
+import PlayerComparisonLayout from './views/PlayerCompare'
 // import Test from './views/modules/PrimeAutoComplete'
 
 function App() {
-  const [activeView, setActiveView] = useState("3");
+  const [activeView, setActiveView] = useState("1");
 
   const renderView = () => {
-    switch (activeView) {
+    switch (activeView) {    
       case "1":
-        return  <CoinCompare/>;
-      // case "2":
-      //   return <CoinsDetails/>;
-      case "3":
-        return <CoinsDetailsDynamic/>;
+        return <PlayerComparisonLayout/>;
       case "4":
         return <div>Contact Us: Reach out at info@example.com.</div>;
       default:
@@ -26,16 +20,9 @@ function App() {
   return (
     <div className="App">
        <div>
-      {/* Navigation Bar */}
       <nav style={styles.nav}>
         <button style={styles.navButton} onClick={() => setActiveView("1")}>
-          Coin Compare
-        </button>
-        {/* <button style={styles.navButton} onClick={() => setActiveView("2")}>
-          Coin Details
-        </button> */}
-        <button style={styles.navButton} onClick={() => setActiveView("3")}>
-          Dynamic Coin Details
+          Player Comparison
         </button>
         <button style={styles.navButton} onClick={() => setActiveView("4")}>
           Contact
