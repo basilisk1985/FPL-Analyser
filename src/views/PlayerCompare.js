@@ -37,49 +37,93 @@ class HomePage extends Component {
     return selectedObject[key];
   };
 
-  fetchPlayersList = () => {
-    this.setState({ inProgress: true });
-    const playersList = data.elements;
-    const teamsList = data.teams;
-    const playerNamesList =
-      playersList && playersList.length > 0
-        ? // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
-          playersList.map((p) => ({
-            item: p.web_name,
-            description:
-              p.first_name +
-              " " +
-              p.second_name +
-              " (" +
-              this.getLabel(teamsList, "id", p.team, "short_name") +
-              ") ",
-            meta: {
-              team: teamsList.find((i) => i["id"] === p.team) || {},
-              player: p,
-            },
-          }))
-        : [{}];
-    this.setState({
-      inProgress: false,
-      playersList: playersList,
-      playerNamesList: playerNamesList,
-      teamsList: teamsList,
-    });
+  // fetchPlayersList = () => {
+  //   this.setState({ inProgress: true });
+  //   const playersList = data.elements;
+  //   const teamsList = data.teams;
+  //   const playerNamesList =
+  //     playersList && playersList.length > 0
+  //       ? // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
+  //         playersList.map((p) => ({
+  //           item: p.web_name,
+  //           description:
+  //             p.first_name +
+  //             " " +
+  //             p.second_name +
+  //             " (" +
+  //             this.getLabel(teamsList, "id", p.team, "short_name") +
+  //             ") ",
+  //           meta: {
+  //             team: teamsList.find((i) => i["id"] === p.team) || {},
+  //             player: p,
+  //           },
+  //         }))
+  //       : [{}];
+  //   this.setState({
+  //     inProgress: false,
+  //     playersList: playersList,
+  //     playerNamesList: playerNamesList,
+  //     teamsList: teamsList,
+  //   });
 
-    // axios
-    // .get("https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static")
-    // .then((response) => {
-    //   const res = response.data ||[]
-    //   const playersList  = res.elements
-    //   const playerNamesList = playersList && playersList.length>0 ?
-    //   // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
-    //   playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
-    //   this.setState({inProgress:false})
-    //   this.setState({playersList:playersList,playerNamesList:playerNamesList})
-    // })
-    // .catch((err) => {
-    //   this.setState({inProgress:false})
-    //   console.log(err)});
+  //   // axios
+  //   // .get("https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static")
+  //   // .then((response) => {
+  //   //   const res = response.data ||[]
+  //   //   const playersList  = res.elements
+  //   //   const playerNamesList = playersList && playersList.length>0 ?
+  //   //   // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
+  //   //   playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
+  //   //   this.setState({inProgress:false})
+  //   //   this.setState({playersList:playersList,playerNamesList:playerNamesList})
+  //   // })
+  //   // .catch((err) => {
+  //   //   this.setState({inProgress:false})
+  //   //   console.log(err)});
+  // };
+
+  fetchPlayersList = () => {
+    const { inProgress, playersList } = this.state;
+    if (!inProgress && !(playersList && playersList.length > 1)) {
+      this.setState({ inProgress: true });
+      axios
+        .get(
+          "https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static"
+        )
+        .then((response) => {
+          const res = response.data || [];
+          const playersList = data.elements;
+          const teamsList = data.teams;
+          const playerNamesList =
+            playersList && playersList.length > 0
+              ? // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
+                playersList.map((p) => ({
+                  item: p.web_name,
+                  description:
+                    p.first_name +
+                    " " +
+                    p.second_name +
+                    " (" +
+                    this.getLabel(teamsList, "id", p.team, "short_name") +
+                    ") ",
+                  meta: {
+                    team: teamsList.find((i) => i["id"] === p.team) || {},
+                    player: p,
+                  },
+                }))
+              : [{}];
+          this.setState({
+            inProgress: false,
+            playersList: playersList,
+            playerNamesList: playerNamesList,
+            teamsList: teamsList,
+          });
+        })
+        .catch((err) => {
+          this.setState({ inProgress: false });
+          console.log(err);
+        });
+    }
   };
 
   comparePlayers = () => {
@@ -128,7 +172,7 @@ class HomePage extends Component {
       [headers.now_cost]: (p) => (p ? "£ " + p / 10 : ""),
       [headers.element_type]: (p) => playerRole[p],
       [headers.birth_date]: (p) => {
-        if (p ) {
+        if (p) {
           const birthDate = new Date(p);
           const today = new Date();
           return today.getFullYear() - birthDate.getFullYear();
