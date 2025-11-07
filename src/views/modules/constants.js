@@ -166,7 +166,7 @@ const headers = {
   // element_type : "Role" ,
   web_name: "Player Name",
   now_cost: "Cost",
-  now_cost_rank: "Cost Rank",
+  // now_cost_rank: "Cost Rank",
   form: "Form",
   form_rank: "Form Rank",
   selected_by_percent: "Selected By",

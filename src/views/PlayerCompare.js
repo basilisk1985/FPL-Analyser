@@ -16,7 +16,6 @@ class HomePage extends Component {
   };
 
   componentDidMount() {
-    // if (!this.state.playersList && !(this.state.playersList && this.state.playersList.length && this.state.playersList.length>0))
     this.fetchPlayersList();
   }
 
@@ -36,6 +35,12 @@ class HomePage extends Component {
     const selectedObject = array.find((i) => i[field] === value) || {};
     return selectedObject[key];
   };
+
+  findTeamFullName = (teamId) =>
+    this.getLabel(this.state.teams, "id", teamId, "name");
+
+  findTeamShortName = (teamId) =>
+    this.getLabel(this.state.teams, "id", teamId, "short_name");
 
   // fetchPlayersList = () => {
   //   this.setState({ inProgress: true });
@@ -126,6 +131,7 @@ class HomePage extends Component {
   //       });
   //   }
   // };
+
   fetchPlayersList = () => {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
@@ -135,7 +141,6 @@ class HomePage extends Component {
         .then((res) => res.json())
         .then((response) => {
           console.log("START : ", response);
-          // const data = response || {};
           const playersList = response.elements;
           const teamsList = response.teams;
           const playerNamesList =
@@ -147,7 +152,7 @@ class HomePage extends Component {
                     " " +
                     p.second_name +
                     " (" +
-                    this.getLabel(teamsList, "id", p.team, "short_name") +
+                    this.findTeamShortName(p.team) +
                     ") ",
                   meta: {
                     team: teamsList.find((i) => i["id"] === p.team) || {},
@@ -159,7 +164,7 @@ class HomePage extends Component {
             inProgress: false,
             playersList: playersList,
             playerNamesList: playerNamesList,
-            teamsList: teamsList,
+            ...response,
           });
         })
         .catch((err) => console.error(err));
@@ -192,7 +197,7 @@ class HomePage extends Component {
     titles.forEach((h) => {
       const header = headers[h];
       const rowData = playersDetails.map((c) => {
-        return c[h];
+        return h === "now_cost_rank" ? c[h] + "^%&^" : c[h];
       });
       const row = [header, ...rowData];
       return result.push(row);
@@ -206,7 +211,6 @@ class HomePage extends Component {
 
   tableCreator = (data) => {
     const playerRole = ["", "GK", "Defender", "Midfielder", "Forward"];
-    const teamsList = this.state.teamsList || [{}];
 
     const normalisers = {
       [headers.now_cost]: (p) => (p ? "£ " + p / 10 : ""),
@@ -219,10 +223,7 @@ class HomePage extends Component {
         }
         return "";
       },
-      [headers.team]: (p) => {
-        const teamObject = teamsList.find((i) => i.id == p) || {};
-        return teamObject.name;
-      },
+      [headers.team]: this.findTeamFullName,
     };
 
     const rowHeaderStyle = {
