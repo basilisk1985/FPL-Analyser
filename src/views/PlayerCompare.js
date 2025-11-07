@@ -197,7 +197,7 @@ class HomePage extends Component {
     titles.forEach((h) => {
       const header = headers[h];
       const rowData = playersDetails.map((c) => {
-        return h === "now_cost_rank" ? c[h] + "^%&^" : c[h];
+        return h === "now_cost" ? c[h] + ` ( ${c['now_cost_rank']} th )` : c[h];
       });
       const row = [header, ...rowData];
       return result.push(row);
