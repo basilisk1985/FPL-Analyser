@@ -215,6 +215,10 @@ class HomePage extends Component {
           ? this.addRank(c["influence"], c["influence_rank"])
           : h === "ict_index"
           ? this.addRank(c["ict_index"], c["ict_index_rank"])
+          : h === "transfers_in"
+          ? c["transfers_in"] - c["transfers_out"]
+          : h === "transfers_in_event"
+          ? c["transfers_in_event"] - c["transfers_out_event"]
           : c[h];
       });
       const row = [header, ...rowData];
@@ -222,6 +226,15 @@ class HomePage extends Component {
     });
     return result;
   };
+
+  /*
+
+  transfers_in: "Transfers In",
+  transfers_in_event: "Transfers In GW",
+  transfers_out: "Trasnfers Out",
+  transfers_out_event: "Transfers Out GW",
+
+  */
 
   inputFieldChangeHandler = (value) => {
     return this.setState({ inputField: value });
