@@ -191,6 +191,8 @@ class HomePage extends Component {
     this.setState({ filteredData: filteredData });
   };
 
+  addRank = (val, rank) => (val ? `${val} ( ${rank}th )` : "");
+
   tableDataCreator = (playersDetails) => {
     const result = [];
     const titles = Object.keys(headers);
@@ -198,9 +200,24 @@ class HomePage extends Component {
       const header = headers[h];
       const rowData = playersDetails.map((c) => {
         return h === "now_cost"
-          ? c[h]
-            ? "£ " + c[h] / 10 + ` ( ${c["now_cost_rank"]} th )`
-            : ""
+          ? this.addRank(
+              c["now_cost"] ? c["now_cost"] / 10 : "",
+              c["now_cost_rank"]
+            )
+          : h === "rank"
+          ? this.addRank(c["rank"], c["rank_rank"])
+          : h === "selected_by_percent"
+          ? this.addRank(c["selected_by_percent"], c["selected_rank"])
+          : h === "points_per_game"
+          ? this.addRank(c["points_per_game"], c["points_per_game_rank"])
+          : h === "creativity"
+          ? this.addRank(c["creativity"], c["creativity_rank"])
+          : h === "threat"
+          ? this.addRank(c["threat"], c["threat_rank"])
+          : h === "influence"
+          ? this.addRank(c["influence"], c["influence_rank"])
+          : h === "ict_index"
+          ? this.addRank(c["ict_index"], c["ict_index_rank"])
           : c[h];
       });
       const row = [header, ...rowData];
