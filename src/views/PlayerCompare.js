@@ -197,7 +197,11 @@ class HomePage extends Component {
     titles.forEach((h) => {
       const header = headers[h];
       const rowData = playersDetails.map((c) => {
-        return h === "now_cost" ? c[h] + ` ( ${c['now_cost_rank']} th )` : c[h];
+        return h === "now_cost"
+          ? p
+            ? "£ " + p / 10 + ` ( ${c["now_cost_rank"]} th )`
+            : ""
+          : c[h];
       });
       const row = [header, ...rowData];
       return result.push(row);
@@ -213,7 +217,6 @@ class HomePage extends Component {
     const playerRole = ["", "GK", "Defender", "Midfielder", "Forward"];
 
     const normalisers = {
-      [headers.now_cost]: (p) => (p ? "£ " + p / 10 : ""),
       [headers.element_type]: (p) => playerRole[p],
       [headers.birth_date]: (p) => {
         if (p) {
