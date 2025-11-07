@@ -130,16 +130,17 @@ class HomePage extends Component {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
       this.setState({ inProgress: true });
-fetch("/api/fpl")
-    .then((res) => res.json())
-    .then((response) => {console.log('START : ',response)
-          const data = response.data || [];
-          const playersList = data.elements;
-          const teamsList = data.teams;
+
+      fetch("/api/fpl")
+        .then((res) => res.json())
+        .then((response) => {
+          console.log("START : ", response);
+          // const data = response || {};
+          const playersList = response.elements;
+          const teamsList = response.teams;
           const playerNamesList =
             playersList && playersList.length > 0
-              ? // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
-                playersList.map((p) => ({
+              ? playersList.map((p) => ({
                   item: p.web_name,
                   description:
                     p.first_name +
@@ -160,8 +161,8 @@ fetch("/api/fpl")
             playerNamesList: playerNamesList,
             teamsList: teamsList,
           });
-    })
-    .catch((err) => console.error(err));
+        })
+        .catch((err) => console.error(err));
     }
   };
 
