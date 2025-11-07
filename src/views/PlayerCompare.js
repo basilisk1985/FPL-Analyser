@@ -82,17 +82,58 @@ class HomePage extends Component {
   //   //   console.log(err)});
   // };
 
+  // fetchPlayersList = () => {
+  //   const { inProgress, playersList } = this.state;
+  //   if (!inProgress && !(playersList && playersList.length > 1)) {
+  //     this.setState({ inProgress: true });
+  //     axios
+  //       .get(
+  //         // "https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static"
+  //         "https://fantasy.premierleague.com/api/bootstrap-static"
+  //       )
+  //       .then((response) => {
+  //         const res = response.data || [];
+  //         const playersList = data.elements;
+  //         const teamsList = data.teams;
+  //         const playerNamesList =
+  //           playersList && playersList.length > 0
+  //             ? // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
+  //               playersList.map((p) => ({
+  //                 item: p.web_name,
+  //                 description:
+  //                   p.first_name +
+  //                   " " +
+  //                   p.second_name +
+  //                   " (" +
+  //                   this.getLabel(teamsList, "id", p.team, "short_name") +
+  //                   ") ",
+  //                 meta: {
+  //                   team: teamsList.find((i) => i["id"] === p.team) || {},
+  //                   player: p,
+  //                 },
+  //               }))
+  //             : [{}];
+  //         this.setState({
+  //           inProgress: false,
+  //           playersList: playersList,
+  //           playerNamesList: playerNamesList,
+  //           teamsList: teamsList,
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         this.setState({ inProgress: false });
+  //         console.log(err);
+  //       });
+  //   }
+  // };
   fetchPlayersList = () => {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
       this.setState({ inProgress: true });
-      axios
-        .get(
-          // "https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static"
-          "https://fantasy.premierleague.com/api/bootstrap-static"
-        )
-        .then((response) => {
-          const res = response.data || [];
+fetch("/api/fpl")
+    .then((res) => res.json())
+    .then((response) => {console.log('START : ',response)
+          const data = response.data || [];
           const playersList = data.elements;
           const teamsList = data.teams;
           const playerNamesList =
@@ -119,11 +160,8 @@ class HomePage extends Component {
             playerNamesList: playerNamesList,
             teamsList: teamsList,
           });
-        })
-        .catch((err) => {
-          this.setState({ inProgress: false });
-          console.log(err);
-        });
+    })
+    .catch((err) => console.error(err));
     }
   };
 
