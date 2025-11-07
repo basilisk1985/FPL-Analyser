@@ -39,10 +39,7 @@ class HomePage extends Component {
   findTeamFullName = (teamId) =>
     this.getLabel(this.state.teams, "id", teamId, "name");
 
-  findTeamShortName = (teamId) =>
-    this.getLabel(this.state.teams, "id", teamId, "short_name");
-
-  // fetchPlayersList = () => {
+   // fetchPlayersList = () => {
   //   this.setState({ inProgress: true });
   //   const playersList = data.elements;
   //   const teamsList = data.teams;
@@ -152,7 +149,7 @@ class HomePage extends Component {
                     " " +
                     p.second_name +
                     " (" +
-                    this.findTeamShortName(p.team) +
+                    this.getLabel(teamsList, "id", p.team, "short_name") +
                     ") ",
                   meta: {
                     team: teamsList.find((i) => i["id"] === p.team) || {},
