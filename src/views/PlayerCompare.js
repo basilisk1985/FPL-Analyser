@@ -198,8 +198,8 @@ class HomePage extends Component {
       const header = headers[h];
       const rowData = playersDetails.map((c) => {
         return h === "now_cost"
-          ? p
-            ? "£ " + p / 10 + ` ( ${c["now_cost_rank"]} th )`
+          ? c[h]
+            ? "£ " + c[h] / 10 + ` ( ${c["now_cost_rank"]} th )`
             : ""
           : c[h];
       });
