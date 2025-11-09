@@ -23,7 +23,8 @@ class HomePage extends Component {
   };
 
   componentDidMount() {
-    this.fetchPlayersList(10);
+    this.fetchPlayersList();
+    this.fetchGameWeekData(10)
   }
 
   fetchGameWeekData =(gw_id) =>{
