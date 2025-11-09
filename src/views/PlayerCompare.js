@@ -15,7 +15,8 @@ class HomePage extends Component {
     selectedGameWeek: [9, 10],
     compareMode: "OVERALL",
     // compareMode: "GAME_WEEKS",
-    gameWeekData: GAME_WEEK_Data,
+    gameWeekData: {},
+    // gameWeekData: GAME_WEEK_Data,
     gameWeeksAveragePlayersData: [{}],
   };
 
@@ -28,6 +29,13 @@ class HomePage extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log("Live GW data:", data);
+        //return data
+        const currentGameWeekData = this.state.gameWeekData || {};
+        currentGameWeekData = {
+          ...currentGameWeekData,
+          [gw_id]: { ...data, dateFetched: new Date().toISOString() },
+        };
+        this.setState({ gameWeekData: currentGameWeekData });
       })
       .catch(console.error);
   };
@@ -82,7 +90,10 @@ class HomePage extends Component {
         gwNumbers.push(i);
         if (availableGameWeeks.includes(i.toString()))
           console.log("Data exist ", i);
-        else console.log("no data for  : ", i);
+        else {
+          console.log("no data for  : ", i);
+          this.fetchGameWeekAPI(i);
+        }
       }
     }
     const res = this.getDynamicAverages(
@@ -415,7 +426,7 @@ class HomePage extends Component {
     const selectedPlayersObjectList = this.state.selectedPlayersObjectList || [
       {},
     ];
-    // console.log("State", this.state);
+    console.log("State", this.state);
 
     const table = (
       <div style={{ marginTop: "2vh", minWidth: "60vw" }}>
