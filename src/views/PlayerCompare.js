@@ -23,7 +23,7 @@ class HomePage extends Component {
     this.fetchPlayersList();
   }
 
-  fetchGameWeekData = (gw_id) => {
+  fetchGameWeekAPI = (gw_id) => {
     fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`)
       .then((res) => res.json())
       .then((data) => {
@@ -131,7 +131,7 @@ class HomePage extends Component {
   };
 
   addPlayer = () => {
-    this.fetchGameWeekData(10);
+    this.fetchGameWeekAPI(10);
 
     const inputField = this.state.inputField || "";
     if (inputField && inputField.item) {
