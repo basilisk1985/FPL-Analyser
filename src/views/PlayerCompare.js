@@ -3,10 +3,7 @@ import { Component } from "react";
 // import axios from "axios";
 import Grid from "@mui/material/Grid2";
 import AutoComplete from "./modules/PrimeAutoCompleteFullObject";
-import {
-  gameWeeksHeaders,
-  overallTableHeaders,
-} from "./modules/constants";
+import { gameWeeksHeaders, overallTableHeaders } from "./modules/constants";
 import { data } from "./data";
 import { GAME_WEEK_Data } from "./GWData";
 import Box from "@mui/material/Box";
@@ -24,17 +21,16 @@ class HomePage extends Component {
 
   componentDidMount() {
     this.fetchPlayersList();
-    this.fetchGameWeekData(10)
   }
 
-  fetchGameWeekData =(gw_id) =>{
+  fetchGameWeekData = (gw_id) => {
     fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`)
-  .then((res) => res.json())
-  .then((data) => {
-    console.log("Live GW data:", data);
-  })
-  .catch(console.error);
-  }
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Live GW data:", data);
+      })
+      .catch(console.error);
+  };
 
   comparePlayers = () => {
     const { playersList, selectedPlayersObjectList } = this.state;
@@ -82,7 +78,7 @@ class HomePage extends Component {
       console.log("^*&^", "Single GW", numberOfWeeks);
     } else {
       console.log("^*&^", "Multi GW", availableGameWeeks);
-      for (let i = startWeek+1; i <= endWeek; i++) {
+      for (let i = startWeek + 1; i <= endWeek; i++) {
         gwNumbers.push(i);
         if (availableGameWeeks.includes(i.toString()))
           console.log("Data exist ", i);
@@ -135,6 +131,8 @@ class HomePage extends Component {
   };
 
   addPlayer = () => {
+    this.fetchGameWeekData(10);
+
     const inputField = this.state.inputField || "";
     if (inputField && inputField.item) {
       const selectedPlayersObjectList =
@@ -267,7 +265,8 @@ class HomePage extends Component {
                     p.second_name +
                     " (" +
                     this.getLabel(teamsList, "id", p.team, "short_name") +
-                    ") ",id:p.id,
+                    ") ",
+                  id: p.id,
                   meta: {
                     team: teamsList.find((i) => i["id"] === p.team) || {},
                     player: p,
@@ -286,7 +285,6 @@ class HomePage extends Component {
   };
 
   addRank = (val, rank) => (val ? `${val} ( ${rank}th )` : "");
-
 
   inputFieldChangeHandler = (value) => {
     return this.setState({ inputField: value });
