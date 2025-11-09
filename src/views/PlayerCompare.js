@@ -23,7 +23,16 @@ class HomePage extends Component {
   };
 
   componentDidMount() {
-    this.fetchPlayersList();
+    this.fetchPlayersList(10);
+  }
+
+  fetchGameWeekData =(gw_id) =>{
+    fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`)
+  .then((res) => res.json())
+  .then((data) => {
+    console.log("Live GW data:", data);
+  })
+  .catch(console.error);
   }
 
   comparePlayers = () => {
