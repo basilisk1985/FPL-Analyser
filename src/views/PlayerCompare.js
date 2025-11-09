@@ -84,9 +84,15 @@ class HomePage extends Component {
     console.log("%%%%", startWeek, endWeek, numberOfWeeks);
     if (numberOfWeeks === 1) {
       console.log("^*&^", "Single GW", numberOfWeeks);
+      if (availableGameWeeks.includes(startWeek.toString()))
+        console.log("Data exist ", startWeek);
+      else {
+        console.log("no data for  : ", startWeek);
+        this.fetchGameWeekAPI(startWeek);
+      }
     } else {
       console.log("^*&^", "Multi GW", availableGameWeeks);
-      for (let i = startWeek + 1; i <= endWeek; i++) {
+      for (let i = startWeek; i <= endWeek; i++) {
         gwNumbers.push(i);
         if (availableGameWeeks.includes(i.toString()))
           console.log("Data exist ", i);
