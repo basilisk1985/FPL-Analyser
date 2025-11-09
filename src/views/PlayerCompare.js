@@ -241,7 +241,7 @@ class HomePage extends Component {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
       this.setState({ inProgress: true });
-      fetch("/api/fpl")
+      fetch("/api/overal_fpl_data")
         .then((res) => res.json())
         .then((response) => {
           console.log("START : ", response);
