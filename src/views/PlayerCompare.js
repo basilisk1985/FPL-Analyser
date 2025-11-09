@@ -24,20 +24,41 @@ class HomePage extends Component {
     this.fetchPlayersList();
   }
 
-  fetchGameWeekAPI = (gw_id) => {
-    fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Live GW data:", data);
-        const currentGameWeekData = this.state.gameWeekData || {};
-        const newGameWeekData= {
-          ...currentGameWeekData,
-          [gw_id]: { ...data, dateFetched: new Date().toISOString() },
-        };
-        this.setState({ gameWeekData: newGameWeekData });
-      })
-      .catch(console.error);
-  };
+  // fetchGameWeekAPI = useCallback(async (gw_id) => {
+  //      fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`)
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         console.log("Live GW data:", data);
+  //         const currentGameWeekData = this.state.gameWeekData || {};
+  //         const newGameWeekData= {
+  //           ...currentGameWeekData,
+  //           [gw_id]: { ...data, dateFetched: new Date().toISOString() },
+  //         };
+  //         this.setState({ gameWeekData: newGameWeekData });
+  //       })
+  //       .catch(console.error);
+  //   });
+
+  
+async fetchGameWeekAPI(gw_id) {
+  try {
+    const res = await fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`);
+    const data = await res.json();
+
+    const currentGameWeekData = this.state.gameWeekData || {};
+    const newGameWeekData = {
+      ...currentGameWeekData,
+      [gw_id]: { ...data, dateFetched: new Date().toISOString() },
+    };
+
+    this.setState({ gameWeekData: newGameWeekData });
+    return newGameWeekData;
+  } catch (err) {
+    console.error("Error fetching GW:", gw_id, err);
+    throw err;
+  }
+}
+
 
   comparePlayers = () => {
     const { playersList, selectedPlayersObjectList } = this.state;
@@ -77,32 +98,33 @@ class HomePage extends Component {
   fetchGameWeekData = (startWeek, endWeek) => {
     const { gameWeekData, selectedPlayersObjectList } = this.state;
     const gwNumbers = [startWeek];
+    let newGameWeekData ={};
     const selectedPlayersIdList = selectedPlayersObjectList.map((i) => i.id);
     const numberOfWeeks = endWeek - startWeek + 1;
     const availableGameWeeks = Object.keys(gameWeekData);
     console.log("%%%%", startWeek, endWeek, numberOfWeeks);
-    if (numberOfWeeks === 1) {
-      console.log("^*&^", "Single GW", numberOfWeeks);
-      if (availableGameWeeks.includes(startWeek.toString()))
-        console.log("Data exist ", startWeek);
+    // if (numberOfWeeks === 1) {
+    //   console.log("^*&^", "Single GW", numberOfWeeks);
+    //   if (availableGameWeeks.includes(startWeek.toString()))
+    //     console.log("Data exist ", startWeek);
+    //   else {
+    //     console.log("no data for  : ", startWeek);
+    //     this.fetchGameWeekAPI(startWeek);
+    //   }
+    // } else {
+    console.log("^*&^", "Multi GW", availableGameWeeks);
+    for (let i = startWeek; i <= endWeek; i++) {
+      gwNumbers.push(i);
+      if (availableGameWeeks.includes(i.toString()))
+        console.log("Data exist ", i);
       else {
-        console.log("no data for  : ", startWeek);
-        this.fetchGameWeekAPI(startWeek);
-      }
-    } else {
-      console.log("^*&^", "Multi GW", availableGameWeeks);
-      for (let i = startWeek; i <= endWeek; i++) {
-        gwNumbers.push(i);
-        if (availableGameWeeks.includes(i.toString()))
-          console.log("Data exist ", i);
-        else {
-          console.log("no data for  : ", i);
-          this.fetchGameWeekAPI(i);
-        }
+        console.log("no data for  : ", i);
+        newGameWeekData = this.fetchGameWeekAPI(i);
       }
     }
+    // }
     const res = this.getDynamicAverages(
-      gameWeekData,
+      newGameWeekData,
       selectedPlayersIdList,
       gwNumbers
     );
