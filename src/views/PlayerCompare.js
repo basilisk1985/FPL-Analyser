@@ -1,31 +1,137 @@
 import "./PlayerCompare.css";
 import { Component } from "react";
-import axios from "axios";
+// import axios from "axios";
 import Grid from "@mui/material/Grid2";
-// import { Autocomplete } from '@mui/material';
-// import AutoComplete from './modules/AutoCompleteField1';
 import AutoComplete from "./modules/PrimeAutoCompleteFullObject";
-import { headerLabels, headers } from "./modules/constants";
+import {
+  gameWeeksHeaders,
+  overallTableHeaders,
+} from "./modules/constants";
 import { data } from "./data";
+import { GAME_WEEK_Data } from "./GWData";
+import Box from "@mui/material/Box";
+import { Slider, InputLabel, Button } from "@mui/material";
 
 class HomePage extends Component {
   state = {
-    ids: [null, null, null, null, null],
     inProgress: false,
-    radioButtonValue: "Option 1",
+    selectedGameWeek: [9, 10],
+    compareMode: "OVERALL",
+    // compareMode: "GAME_WEEKS",
+    gameWeekData: GAME_WEEK_Data,
+    gameWeeksAveragePlayersData: [{}],
   };
 
   componentDidMount() {
     this.fetchPlayersList();
   }
 
+  comparePlayers = () => {
+    const { playersList, selectedPlayersObjectList } = this.state;
+    console.log("%%%", selectedPlayersObjectList);
+    const filteredData = [];
+
+    if (
+      playersList &&
+      playersList.length &&
+      selectedPlayersObjectList &&
+      selectedPlayersObjectList.length
+    ) {
+      selectedPlayersObjectList.map((selectedPlayer) => {
+        playersList.find((p) => {
+          if (p.web_name === selectedPlayer.item) filteredData.push(p);
+        });
+      });
+    }
+    this.setState({
+      filteredData: filteredData,
+      selectedGameWeek: [0, 0],
+      compareMode: "OVERALL",
+    });
+  };
+
+  gameWeekComparison = () => {
+    const { selectedGameWeek } = this.state;
+    if (selectedGameWeek[0] === 0 && selectedGameWeek[1] === 0) {
+      this.setState({ compareMode: "OVERALL" });
+    } else {
+      this.setState({ compareMode: "GAME_WEEKS" });
+      console.log("Other Mode");
+      this.fetchGameWeekData(selectedGameWeek[0], selectedGameWeek[1]);
+    }
+  };
+
+  fetchGameWeekData = (startWeek, endWeek) => {
+    const { gameWeekData, selectedPlayersObjectList } = this.state;
+    const gwNumbers = [startWeek];
+    const selectedPlayersIdList = selectedPlayersObjectList.map((i) => i.id);
+    const numberOfWeeks = endWeek - startWeek + 1;
+    const availableGameWeeks = Object.keys(gameWeekData);
+    console.log("%%%%", startWeek, endWeek, numberOfWeeks);
+    if (numberOfWeeks === 1) {
+      console.log("^*&^", "Single GW", numberOfWeeks);
+    } else {
+      console.log("^*&^", "Multi GW", availableGameWeeks);
+      for (let i = startWeek+1; i <= endWeek; i++) {
+        gwNumbers.push(i);
+        if (availableGameWeeks.includes(i.toString()))
+          console.log("Data exist ", i);
+        else console.log("no data for  : ", i);
+      }
+    }
+    const res = this.getDynamicAverages(
+      gameWeekData,
+      selectedPlayersIdList,
+      gwNumbers
+    );
+    this.setState({ gameWeeksAveragePlayersData: res });
+    console.log("*&(*&*((&*&(*(*(**", res);
+  };
+
+  getDynamicAverages = (data, ids, gws) => {
+    const rounding = (num) => Math.round(num * 100) / 100;
+    console.log("***************", data, ids, gws);
+    const results = {};
+    ids.forEach((id) => {
+      let totals = {};
+      let counts = 0;
+
+      gws.forEach((gw) => {
+        const gwData = data[gw.toString()];
+        const gwPlayersData = gwData.elements;
+        // if (!gwData) return;
+
+        console.log("*gwData*", gwPlayersData, gw);
+        const player = gwPlayersData.find((p) => p.id === id);
+        if (player && player.stats) {
+          // Loop over all keys in the stats object dynamically
+          Object.entries(player.stats).forEach(([key, value]) => {
+            totals[key] = rounding(
+              (totals[key] || 0) +
+                (typeof value === "string" ? Number(value) : value)
+            );
+          });
+          counts++;
+        }
+      });
+      results[id] = totals;
+      const pts_per_match = results[id].total_points / gws.length;
+      results[id] = { ...results[id], pts_average: pts_per_match };
+    });
+
+    const flattenedResults = ids.map((id) => ({ ...results[id], id: id }));
+
+    return flattenedResults;
+  };
+
   addPlayer = () => {
     const inputField = this.state.inputField || "";
     if (inputField && inputField.item) {
-      const playerObjectList = this.state.playerObjectList || [];
-      playerObjectList.push(inputField);
+      const selectedPlayersObjectList =
+        this.state.selectedPlayersObjectList || [];
+      selectedPlayersObjectList.push(inputField);
       return this.setState({
-        playerObjectList: playerObjectList,
+        selectedPlayersObjectList: selectedPlayersObjectList,
         inputFieldValue: null,
       });
     }
@@ -39,9 +145,9 @@ class HomePage extends Component {
   findTeamFullName = (teamId) =>
     this.getLabel(this.state.teams, "id", teamId, "name");
 
-   // fetchPlayersList = () => {
+  // fetchPlayersList = () => {
   //   this.setState({ inProgress: true });
-  //   const playersList = data.elements;
+  //   const playersList = data.elements; //Players
   //   const teamsList = data.teams;
   //   const playerNamesList =
   //     playersList && playersList.length > 0
@@ -55,6 +161,7 @@ class HomePage extends Component {
   //             " (" +
   //             this.getLabel(teamsList, "id", p.team, "short_name") +
   //             ") ",
+  //           id: p.id,
   //           meta: {
   //             team: teamsList.find((i) => i["id"] === p.team) || {},
   //             player: p,
@@ -67,6 +174,7 @@ class HomePage extends Component {
   //     playerNamesList: playerNamesList,
   //     teamsList: teamsList,
   //   });
+  // };
 
   //   // axios
   //   // .get("https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static")
@@ -108,7 +216,7 @@ class HomePage extends Component {
   //                   p.second_name +
   //                   " (" +
   //                   this.getLabel(teamsList, "id", p.team, "short_name") +
-  //                   ") ",
+  //                   ") ",id:p.id,
   //                 meta: {
   //                   team: teamsList.find((i) => i["id"] === p.team) || {},
   //                   player: p,
@@ -133,7 +241,6 @@ class HomePage extends Component {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
       this.setState({ inProgress: true });
-
       fetch("/api/fpl")
         .then((res) => res.json())
         .then((response) => {
@@ -150,7 +257,7 @@ class HomePage extends Component {
                     p.second_name +
                     " (" +
                     this.getLabel(teamsList, "id", p.team, "short_name") +
-                    ") ",
+                    ") ",id:p.id,
                   meta: {
                     team: teamsList.find((i) => i["id"] === p.team) || {},
                     player: p,
@@ -168,73 +275,8 @@ class HomePage extends Component {
     }
   };
 
-  comparePlayers = () => {
-    const { playersList, playerObjectList } = this.state;
-    console.log("%%%", playerObjectList);
-    const filteredData = [];
-
-    if (
-      playersList &&
-      playersList.length &&
-      playerObjectList &&
-      playerObjectList.length
-    ) {
-      playerObjectList.map((selectedPlayer) => {
-        playersList.find((p) => {
-          if (p.web_name === selectedPlayer.item) filteredData.push(p);
-        });
-      });
-    }
-    this.setState({ filteredData: filteredData });
-  };
-
   addRank = (val, rank) => (val ? `${val} ( ${rank}th )` : "");
 
-  tableDataCreator = (playersDetails) => {
-    const result = [];
-    const titles = Object.keys(headers);
-    titles.forEach((h) => {
-      const header = headers[h];
-      const rowData = playersDetails.map((c) => {
-        return h === "now_cost"
-          ? this.addRank(
-              c["now_cost"] ? c["now_cost"] / 10 : "",
-              c["now_cost_rank"]
-            )
-          : h === "rank"
-          ? this.addRank(c["rank"], c["rank_rank"])
-          : h === "selected_by_percent"
-          ? this.addRank(c["selected_by_percent"], c["selected_rank"])
-          : h === "points_per_game"
-          ? this.addRank(c["points_per_game"], c["points_per_game_rank"])
-          : h === "creativity"
-          ? this.addRank(c["creativity"], c["creativity_rank"])
-          : h === "threat"
-          ? this.addRank(c["threat"], c["threat_rank"])
-          : h === "influence"
-          ? this.addRank(c["influence"], c["influence_rank"])
-          : h === "ict_index"
-          ? this.addRank(c["ict_index"], c["ict_index_rank"])
-          : h === "transfers_in"
-          ? c["transfers_in"] - c["transfers_out"]
-          : h === "transfers_in_event"
-          ? c["transfers_in_event"] - c["transfers_out_event"]
-          : c[h];
-      });
-      const row = [header, ...rowData];
-      return result.push(row);
-    });
-    return result;
-  };
-
-  /*
-
-  transfers_in: "Transfers In",
-  transfers_in_event: "Transfers In GW",
-  transfers_out: "Trasnfers Out",
-  transfers_out_event: "Transfers Out GW",
-
-  */
 
   inputFieldChangeHandler = (value) => {
     return this.setState({ inputField: value });
@@ -244,8 +286,8 @@ class HomePage extends Component {
     const playerRole = ["", "GK", "Defender", "Midfielder", "Forward"];
 
     const normalisers = {
-      [headers.element_type]: (p) => playerRole[p],
-      [headers.birth_date]: (p) => {
+      [overallTableHeaders.element_type]: (p) => playerRole[p],
+      [overallTableHeaders.birth_date]: (p) => {
         if (p) {
           const birthDate = new Date(p);
           const today = new Date();
@@ -253,7 +295,7 @@ class HomePage extends Component {
         }
         return "";
       },
-      [headers.team]: this.findTeamFullName,
+      [overallTableHeaders.team]: this.findTeamFullName,
     };
 
     const rowHeaderStyle = {
@@ -294,32 +336,99 @@ class HomePage extends Component {
     );
   };
 
+  overallTableDataCreator = (playersDetails) => {
+    const result = [];
+    const titles = Object.keys(overallTableHeaders);
+    titles.forEach((h) => {
+      const header = overallTableHeaders[h];
+      const rowData = playersDetails.map((c) => {
+        return h === "now_cost"
+          ? this.addRank(
+              c["now_cost"] ? c["now_cost"] / 10 : "",
+              c["now_cost_rank"]
+            )
+          : h === "rank"
+          ? this.addRank(c["rank"], c["rank_rank"])
+          : h === "selected_by_percent"
+          ? this.addRank(c["selected_by_percent"], c["selected_rank"])
+          : h === "points_per_game"
+          ? this.addRank(c["points_per_game"], c["points_per_game_rank"])
+          : h === "creativity"
+          ? this.addRank(c["creativity"], c["creativity_rank"])
+          : h === "threat"
+          ? this.addRank(c["threat"], c["threat_rank"])
+          : h === "influence"
+          ? this.addRank(c["influence"], c["influence_rank"])
+          : h === "ict_index"
+          ? this.addRank(c["ict_index"], c["ict_index_rank"])
+          : h === "transfers_in"
+          ? c["transfers_in"] - c["transfers_out"]
+          : h === "transfers_in_event"
+          ? c["transfers_in_event"] - c["transfers_out_event"]
+          : c[h];
+      });
+      const row = [header, ...rowData];
+      return result.push(row);
+    });
+    return result;
+  };
+
+  gameWeeksTableDataCreator = (playersDetails, playersList) => {
+    console.log("++++++++++", playersDetails);
+    const result = [];
+    const titles = Object.keys(gameWeeksHeaders);
+    titles.forEach((h) => {
+      const header = gameWeeksHeaders[h];
+      const rowData = playersDetails.map((c) => {
+        return h === "web_name"
+          ? this.getLabel(playersList, "id", c["id"], "item")
+          : c[h];
+      });
+      const row = [header, ...rowData];
+      return result.push(row);
+    });
+    return result;
+  };
+
   findDataByField = (data, fieldName) => {
     const dataArray = data || {};
     return dataArray[fieldName] || "";
   };
 
   render = () => {
+    const {
+      playersList,
+      playerNamesList,
+      selectedGameWeek,
+      compareMode,
+      gameWeeksAveragePlayersData,
+    } = this.state;
     const filteredData = this.state.filteredData || [{}];
-    const playerObjectList = this.state.playerObjectList || [{}];
+    const selectedPlayersObjectList = this.state.selectedPlayersObjectList || [
+      {},
+    ];
+    // console.log("State", this.state);
 
     const table = (
       <div style={{ marginTop: "2vh", minWidth: "60vw" }}>
         <Grid container justifyContent={"center"}>
           <Grid item>
-            {filteredData &&
-              filteredData.length &&
-              this.tableCreator(this.tableDataCreator(filteredData))}
+            {/* {filteredData &&
+              filteredData.length && */}
+            {this.tableCreator(
+              compareMode === "OVERALL"
+                ? this.overallTableDataCreator(filteredData)
+                : this.gameWeeksTableDataCreator(
+                    gameWeeksAveragePlayersData,
+                    selectedPlayersObjectList
+                  )
+            )}
           </Grid>
         </Grid>
       </div>
     );
 
-    const { playersList, playerNamesList } = this.state;
-
-    console.log("State", this.state);
-
-    const textareaValue = playerObjectList
+    const textareaValue = selectedPlayersObjectList
       .map((c) => (c.item ? `${c.item.toUpperCase()}\n` : ""))
       .join("");
 
@@ -387,7 +496,9 @@ class HomePage extends Component {
                   >
                     <button
                       disabled={this.state.inProgress}
-                      onClick={() => this.setState({ playerObjectList: [] })}
+                      onClick={() =>
+                        this.setState({ selectedPlayersObjectList: [] })
+                      }
                     >
                       Reset
                     </button>
@@ -404,6 +515,62 @@ class HomePage extends Component {
 
               <Grid size={{ xs: 12, lg: 9 }}>
                 <Grid container justifyContent={"center"}>
+                  <Grid
+                    item
+                    size={{ xs: 12, lg: 9 }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Grid container justifyContent={"center"}>
+                      <Grid item>
+                        <InputLabel style={{ color: "white" }} shrink>
+                          Select Game Week
+                        </InputLabel>
+                      </Grid>
+                      <Grid item size={{ xs: 12 }} />
+                      <Grid item>
+                        <Box
+                          style={{ justifyContent: "center" }}
+                          sx={{ width: 300 }}
+                        >
+                          <Slider
+                            valueLabelDisplay="on"
+                            value={selectedGameWeek}
+                            aria-label="Default"
+                            // valueLabelDisplay="auto"
+                            max={38}
+                            name={"gameWeekSlider"}
+                            onChange={(e) =>
+                              this.setState({
+                                selectedGameWeek: e.target.value,
+                              })
+                            }
+                          />
+                        </Box>
+                      </Grid>
+                      <Grid item size={{ xs: 1 }} />
+                      <Grid item>
+                        <Button
+                          style={{ fontSize: "10px" }}
+                          variant="contained"
+                          onClick={this.gameWeekComparison}
+                          disabled={
+                            !(
+                              selectedPlayersObjectList &&
+                              selectedPlayersObjectList.length > 0 &&
+                              selectedPlayersObjectList[0] &&
+                              selectedPlayersObjectList[0].item > ""
+                            )
+                          }
+                        >
+                          Get Data
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
                   <Grid
                     item
                     size={{ xs: 12, lg: 9 }}

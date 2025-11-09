@@ -162,7 +162,40 @@ const headerLabels = [
   },
 ];
 
-const headers = {
+const gameWeeksHeaders = {
+  web_name: "Player Name",  
+  total_points: "Total Points",
+  pts_average: "Points Per Match",
+  minutes: "Total Mins",
+  goals_scored: "Goals",
+  expected_goals: "XG",
+  assists: "Assists",
+  expected_assists: "XA",
+  expected_goal_involvements: "Expected Goal Involvements",
+  defensive_contribution: "Defensive Contribution",
+  clean_sheets: "Clean Sheet",
+  own_goals: "Own Goal",
+  // penalties_saved: "Penalties Saved",
+  penalties_missed: "Penalties Missed",
+  yellow_cards: "Yellow Cards",
+  red_cards: "Red Cards",
+  bonus: "Bonus Points",
+  bps: "BPS",
+  starts: "Starts",
+  influence: "Influence",
+  creativity: "Creativity",
+  threat: "Threat",
+  ict_index: "ICT",
+  clearances_blocks_interceptions: "CBI",
+  recoveries: "Recoveries",
+  tackles: "Tackles",
+  saves: "Saves",
+  goals_conceded: "Goals Conceded",
+  expected_goals_conceded: "XGC",
+  // in_dreamteam: false,
+};
+
+const overallTableHeaders = {
   // element_type : "Role" ,
   web_name: "Player Name",
   now_cost: "Cost",
@@ -269,6 +302,7 @@ export {
   priceNormaliser,
   noNormaliser,
   allCapital,
-  headers,
+  overallTableHeaders,
   headerLabels,
+  gameWeeksHeaders
 };
