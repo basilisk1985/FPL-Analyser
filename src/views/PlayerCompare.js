@@ -95,7 +95,7 @@ async fetchGameWeekAPI(gw_id) {
     }
   };
 
-  fetchGameWeekData = (startWeek, endWeek) => {
+  fetchGameWeekData = async (startWeek, endWeek) => {
     const { gameWeekData, selectedPlayersObjectList } = this.state;
     const gwNumbers = [startWeek];
     let newGameWeekData ={};
@@ -119,7 +119,7 @@ async fetchGameWeekAPI(gw_id) {
         console.log("Data exist ", i);
       else {
         console.log("no data for  : ", i);
-        newGameWeekData = this.fetchGameWeekAPI(i);
+        newGameWeekData = await this.fetchGameWeekAPI(i);
       }
     }
     // }
@@ -129,12 +129,12 @@ async fetchGameWeekAPI(gw_id) {
       gwNumbers
     );
     this.setState({ gameWeeksAveragePlayersData: res });
-    console.log("*&(*&*((&*&(*(*(**", res);
+    console.log("Game Week Average Data : ", res);
   };
 
   getDynamicAverages = (data, ids, gws) => {
     const rounding = (num) => Math.round(num * 100) / 100;
-    console.log("***************", data, ids, gws);
+    console.log("creating average input", data, ids, gws);
     const results = {};
     ids.forEach((id) => {
       let totals = {};
