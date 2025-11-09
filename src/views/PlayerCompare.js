@@ -1,6 +1,6 @@
 import "./PlayerCompare.css";
 import { Component } from "react";
-import axios from "axios";
+// import axios from "axios";
 import Grid from "@mui/material/Grid2";
 // import { Autocomplete } from '@mui/material';
 // import AutoComplete from './modules/AutoCompleteField1';
