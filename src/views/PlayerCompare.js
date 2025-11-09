@@ -29,13 +29,12 @@ class HomePage extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log("Live GW data:", data);
-        //return data
         const currentGameWeekData = this.state.gameWeekData || {};
-        currentGameWeekData = {
+        const newGameWeekData= {
           ...currentGameWeekData,
           [gw_id]: { ...data, dateFetched: new Date().toISOString() },
         };
-        this.setState({ gameWeekData: currentGameWeekData });
+        this.setState({ gameWeekData: newGameWeekData });
       })
       .catch(console.error);
   };
@@ -148,8 +147,6 @@ class HomePage extends Component {
   };
 
   addPlayer = () => {
-    this.fetchGameWeekAPI(10);
-
     const inputField = this.state.inputField || "";
     if (inputField && inputField.item) {
       const selectedPlayersObjectList =
