@@ -12,7 +12,7 @@ import { Slider, InputLabel, Button } from "@mui/material";
 class HomePage extends Component {
   state = {
     inProgress: false,
-    selectedGameWeek: [9, 10],
+    selectedGameWeek: [0,0],
     compareMode: "OVERALL",
     // compareMode: "GAME_WEEKS",
     gameWeekData: {},
