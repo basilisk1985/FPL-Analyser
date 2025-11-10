@@ -96,6 +96,7 @@ async fetchGameWeekAPI(gw_id) {
   };
 
   fetchGameWeekData = async (startWeek, endWeek) => {
+    this.setState({inProgress : true})
     const { gameWeekData, selectedPlayersObjectList } = this.state;
     const gwNumbers = [startWeek];
     let newGameWeekData ={};
@@ -128,7 +129,7 @@ async fetchGameWeekAPI(gw_id) {
       selectedPlayersIdList,
       gwNumbers
     );
-    this.setState({ gameWeeksAveragePlayersData: res });
+    this.setState({ gameWeeksAveragePlayersData: res, inProgress : false });
     console.log("Game Week Average Data : ", res);
   };
 
@@ -446,6 +447,7 @@ async fetchGameWeekAPI(gw_id) {
       selectedGameWeek,
       compareMode,
       gameWeeksAveragePlayersData,
+      inProgress
     } = this.state;
     const filteredData = this.state.filteredData || [{}];
     const selectedPlayersObjectList = this.state.selectedPlayersObjectList || [
@@ -606,7 +608,8 @@ async fetchGameWeekAPI(gw_id) {
                               selectedPlayersObjectList &&
                               selectedPlayersObjectList.length > 0 &&
                               selectedPlayersObjectList[0] &&
-                              selectedPlayersObjectList[0].item > ""
+                              selectedPlayersObjectList[0].item > ""&&
+                              !inProgress
                             )
                           }
                         >
