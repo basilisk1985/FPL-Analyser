@@ -91,7 +91,7 @@ async fetchGameWeekAPI(gw_id) {
     } else {
       this.setState({ compareMode: "GAME_WEEKS" });
       console.log("Other Mode");
-      this.fetchGameWeekData(selectedGameWeek[0], selectedGameWeek[1]);
+      this.fetchGameWeekData(selectedGameWeek[0]=== 0 ? 1 : selectedGameWeek[0] , selectedGameWeek[1]);
     }
   };
 
@@ -115,7 +115,7 @@ async fetchGameWeekAPI(gw_id) {
     console.log("^*&^", "Multi GW", availableGameWeeks, gameWeekData);
     for (let i = startWeek; i <= endWeek; i++) {
       gwNumbers.push(i);
-      if (availableGameWeeks.includes(i.toString()))
+      if (availableGameWeeks.includes(i.toString()) && false)
         console.log("Data exist ", i);
       else {
         console.log("no data for  : ", i);
