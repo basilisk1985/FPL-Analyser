@@ -112,7 +112,7 @@ async fetchGameWeekAPI(gw_id) {
     //     this.fetchGameWeekAPI(startWeek);
     //   }
     // } else {
-    console.log("^*&^", "Multi GW", availableGameWeeks);
+    console.log("^*&^", "Multi GW", availableGameWeeks, gameWeekData);
     for (let i = startWeek; i <= endWeek; i++) {
       gwNumbers.push(i);
       if (availableGameWeeks.includes(i.toString()))
@@ -133,19 +133,19 @@ async fetchGameWeekAPI(gw_id) {
   };
 
   getDynamicAverages = (data, ids, gws) => {
-    const rounding = (num) => Math.round(num * 100) / 100;
-    console.log("creating average input", data, ids, gws);
+    const rounding = (num) => Math.round(num * 100) / 100; 
+    const uniqueGameweeks= [...new Set(gws)]
+    console.log("creating average input", data, ids, uniqueGameweeks);
     const results = {};
     ids.forEach((id) => {
       let totals = {};
       let counts = 0;
 
-      gws.forEach((gw) => {
+      uniqueGameweeks.forEach((gw) => {
         const gwData = data[gw.toString()];
         const gwPlayersData = gwData.elements;
         // if (!gwData) return;
 
-        console.log("*gwData*", gwPlayersData, gw);
         const player = gwPlayersData.find((p) => p.id === id);
         if (player && player.stats) {
           // Loop over all keys in the stats object dynamically
