@@ -39,26 +39,24 @@ class HomePage extends Component {
   //       .catch(console.error);
   //   });
 
-  
-async fetchGameWeekAPI(gw_id) {
-  try {
-    const res = await fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`);
-    const data = await res.json();
+  async fetchGameWeekAPI(gw_id) {
+    try {
+      const res = await fetch(`/api/gameweek_data_fpl?gw_id=${gw_id}`);
+      const data = await res.json();
 
-    const currentGameWeekData = this.state.gameWeekData || {};
-    const newGameWeekData = {
-      ...currentGameWeekData,
-      [gw_id]: { ...data, dateFetched: new Date().toISOString() },
-    };
+      const currentGameWeekData = this.state.gameWeekData || {};
+      const newGameWeekData = {
+        ...currentGameWeekData,
+        [gw_id]: { ...data, dateFetched: new Date().toISOString() },
+      };
 
-    this.setState({ gameWeekData: newGameWeekData });
-    return newGameWeekData;
-  } catch (err) {
-    console.error("Error fetching GW:", gw_id, err);
-    throw err;
+      this.setState({ gameWeekData: newGameWeekData });
+      return newGameWeekData;
+    } catch (err) {
+      console.error("Error fetching GW:", gw_id, err);
+      throw err;
+    }
   }
-}
-
 
   comparePlayers = () => {
     const { playersList, selectedPlayersObjectList } = this.state;
@@ -91,15 +89,18 @@ async fetchGameWeekAPI(gw_id) {
     } else {
       this.setState({ compareMode: "GAME_WEEKS" });
       console.log("Other Mode");
-      this.fetchGameWeekData(selectedGameWeek[0]=== 0 ? 1 : selectedGameWeek[0] , selectedGameWeek[1]);
+      this.fetchGameWeekData(
+        selectedGameWeek[0] === 0 ? 1 : selectedGameWeek[0],
+        selectedGameWeek[1]
+      );
     }
   };
 
   fetchGameWeekData = async (startWeek, endWeek) => {
-    this.setState({inProgress : true})
+    this.setState({ inProgress: true });
     const { gameWeekData, selectedPlayersObjectList } = this.state;
     const gwNumbers = [startWeek];
-    let newGameWeekData ={};
+    let newGameWeekData = {};
     const selectedPlayersIdList = selectedPlayersObjectList.map((i) => i.id);
     const numberOfWeeks = endWeek - startWeek + 1;
     const availableGameWeeks = Object.keys(gameWeekData);
@@ -129,13 +130,13 @@ async fetchGameWeekAPI(gw_id) {
       selectedPlayersIdList,
       gwNumbers
     );
-    this.setState({ gameWeeksAveragePlayersData: res, inProgress : false });
+    this.setState({ gameWeeksAveragePlayersData: res, inProgress: false });
     console.log("Game Week Average Data : ", res);
   };
 
   getDynamicAverages = (data, ids, gws) => {
-    const rounding = (num) => Math.round(num * 100) / 100; 
-    const uniqueGameweeks= [...new Set(gws)]
+    const rounding = (num) => Math.round(num * 100) / 100;
+    const uniqueGameweeks = [...new Set(gws)];
     console.log("creating average input", data, ids, uniqueGameweeks);
     const results = {};
     ids.forEach((id) => {
@@ -160,7 +161,9 @@ async fetchGameWeekAPI(gw_id) {
         }
       });
       results[id] = totals;
-      const pts_per_match = results[id].total_points / uniqueGameweeks.length;
+      const pts_per_match = rounding(
+        results[id].total_points / uniqueGameweeks.length
+      );
       results[id] = { ...results[id], pts_average: pts_per_match };
     });
 
@@ -447,7 +450,7 @@ async fetchGameWeekAPI(gw_id) {
       selectedGameWeek,
       compareMode,
       gameWeeksAveragePlayersData,
-      inProgress
+      inProgress,
     } = this.state;
     const filteredData = this.state.filteredData || [{}];
     const selectedPlayersObjectList = this.state.selectedPlayersObjectList || [
@@ -608,7 +611,7 @@ async fetchGameWeekAPI(gw_id) {
                               selectedPlayersObjectList &&
                               selectedPlayersObjectList.length > 0 &&
                               selectedPlayersObjectList[0] &&
-                              selectedPlayersObjectList[0].item > ""&&
+                              selectedPlayersObjectList[0].item > "" &&
                               !inProgress
                             )
                           }
