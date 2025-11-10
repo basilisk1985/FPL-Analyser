@@ -160,7 +160,7 @@ async fetchGameWeekAPI(gw_id) {
         }
       });
       results[id] = totals;
-      const pts_per_match = results[id].total_points / gws.length;
+      const pts_per_match = results[id].total_points / uniqueGameweeks.length;
       results[id] = { ...results[id], pts_average: pts_per_match };
     });
 
