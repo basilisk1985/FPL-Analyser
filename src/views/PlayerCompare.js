@@ -316,6 +316,8 @@ class HomePage extends Component {
           console.log("START : ", response);
           const playersList = response.elements;
           const teamsList = response.teams;
+          const events = data.events; //Players
+          const latestGameWeekPlayed = this.getLatestStartedGameweek(events);
           const playerNamesList =
             playersList && playersList.length > 0
               ? playersList.map((p) => ({
@@ -338,6 +340,7 @@ class HomePage extends Component {
             inProgress: false,
             playersList: playersList,
             playerNamesList: playerNamesList,
+            latestGameWeekPlayed,
             ...response,
           });
         })
