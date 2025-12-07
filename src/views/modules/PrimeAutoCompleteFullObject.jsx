@@ -4,15 +4,12 @@ import { AutoComplete } from "primereact/autocomplete";
 import './PrimeAutoComplete.css'
 
 const PrimeAutoComplete = (props)=> {
-    // const [value, setValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
 
     const {items, id, callback, placeholder,setValue} = props;
 
     const changedValue = value => {
         const selectedItemObject = items.find(i=>`${i.item.toUpperCase()} - ${i.description}` === value) ;
-        // const updateValue = selectedItemObject && selectedItemObject.description || "";
-        // setValue(value)
         setValue(value)
         return callback(selectedItemObject)
     }
@@ -20,7 +17,7 @@ const PrimeAutoComplete = (props)=> {
     const search = (event) => {
         if (event.query) {
             const filteredSuggestions = 
-            items.filter(i => (i.item.toLowerCase().startsWith(event.query.toLowerCase())) || (i.description.toLowerCase().startsWith(event.query.toLowerCase())) );
+            items.filter(i => (i.item.toLowerCase().includes(event.query.toLowerCase())) || (i.description.toLowerCase().includes(event.query.toLowerCase())) );
             setSuggestions(filteredSuggestions.map(i=>`${i.item.toUpperCase()} - ${i.description}`));
         } else {
             setSuggestions([]);
