@@ -12,7 +12,7 @@ import { Slider, InputLabel, Button } from "@mui/material";
 class HomePage extends Component {
   state = {
     inProgress: false,
-    selectedGameWeek: [0,0],
+    selectedGameWeek: [0, 0],
     compareMode: "OVERALL",
     // compareMode: "GAME_WEEKS",
     gameWeekData: {},
@@ -94,6 +94,24 @@ class HomePage extends Component {
         selectedGameWeek[1]
       );
     }
+  };
+
+  getLatestStartedGameweek = (gameweeks) => {
+    const nowUtc = new Date();
+
+    const started = gameweeks.filter((gw) => {
+      const deadlineUtc = new Date(gw.deadline_time); // already UTC
+      return deadlineUtc <= nowUtc;
+    });
+
+    if (!started.length) return 0;
+
+    // latest by UTC deadline
+    started.sort(
+      (a, b) => new Date(b.deadline_time) - new Date(a.deadline_time)
+    );
+
+    return started[0] && started[0].id;
   };
 
   fetchGameWeekData = async (startWeek, endWeek) => {
@@ -196,6 +214,8 @@ class HomePage extends Component {
   // fetchPlayersList = () => {
   //   this.setState({ inProgress: true });
   //   const playersList = data.elements; //Players
+  //   const events = data.events; //Players
+  //   const latestGameWeekPlayed = this.getLatestStartedGameweek(events)
   //   const teamsList = data.teams;
   //   const playerNamesList =
   //     playersList && playersList.length > 0
@@ -221,6 +241,7 @@ class HomePage extends Component {
   //     playersList: playersList,
   //     playerNamesList: playerNamesList,
   //     teamsList: teamsList,
+  //     latestGameWeekPlayed
   //   });
   // };
 
@@ -451,6 +472,7 @@ class HomePage extends Component {
       compareMode,
       gameWeeksAveragePlayersData,
       inProgress,
+      latestGameWeekPlayed,
     } = this.state;
     const filteredData = this.state.filteredData || [{}];
     const selectedPlayersObjectList = this.state.selectedPlayersObjectList || [
@@ -590,7 +612,7 @@ class HomePage extends Component {
                             value={selectedGameWeek}
                             aria-label="Default"
                             // valueLabelDisplay="auto"
-                            max={38}
+                            max={latestGameWeekPlayed || 38}
                             name={"gameWeekSlider"}
                             onChange={(e) =>
                               this.setState({
