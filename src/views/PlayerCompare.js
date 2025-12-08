@@ -493,7 +493,7 @@ class HomePage extends Component {
     console.log(filterdData);
 
     return filterdData.map((fd) => ({
-      homeAway: fd.team_a == fd.teamId ? "A" : "H",
+      homeAway: fd.team_a == teamId ? "A" : "H",
       opponent:
         fd.team_a == teamId
           ? this.findTeamShortName(fd.team_h)
