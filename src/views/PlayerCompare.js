@@ -470,7 +470,7 @@ class HomePage extends Component {
     titles.forEach((h) => {
       const header = gameWeeksHeaders[h];
       const rowData = playersDetails.map((c) => {
-        console.log("++++++++++", playersDetails, playersList, c,this.getLabel(playersList, "id", c["id"], "team"));
+        console.log("++++++++++", playersDetails, playersList, c,this.getLabel(playersList, "id", c["id"], "meta"));
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
