@@ -74,29 +74,8 @@ class HomePage extends Component {
     }
   };
 
-
-  // async fetchFixtureData(gw_id) {
-  //   try {
-  //     const res = await fetch(`/api/Fixtures_fpl`);
-  //     const data = await res.json();
-  //     console.log('___________', data)
-
-  //     this.setState({ fixturesData: data });
-  //     return data;
-  //   } catch (err) {
-  //     console.error("Error fetching GW:", gw_id, err);
-  //     throw err;
-  //   }
-  // }
-
   comparePlayers = () => {
-    const fixtures = this.state.fixturesData || [{}]
-    const filteredFixtures = fixtures.filter(
-      (m) => m.event > 15 && m.event <= 15 + 5
-    );
-
     const { playersList, selectedPlayersObjectList } = this.state;
-    console.log("%%%", selectedPlayersObjectList);
     const filteredData = [];
 
     if (
@@ -158,16 +137,7 @@ class HomePage extends Component {
     const selectedPlayersIdList = selectedPlayersObjectList.map((i) => i.id);
     const numberOfWeeks = endWeek - startWeek + 1;
     const availableGameWeeks = Object.keys(gameWeekData);
-    console.log("%%%%", startWeek, endWeek, numberOfWeeks);
-    // if (numberOfWeeks === 1) {
-    //   console.log("^*&^", "Single GW", numberOfWeeks);
-    //   if (availableGameWeeks.includes(startWeek.toString()))
-    //     console.log("Data exist ", startWeek);
-    //   else {
-    //     console.log("no data for  : ", startWeek);
-    //     this.fetchGameWeekAPI(startWeek);
-    //   }
-    // } else {
+
     console.log("^*&^", "Multi GW", availableGameWeeks, gameWeekData);
     for (let i = startWeek; i <= endWeek; i++) {
       gwNumbers.push(i);
@@ -546,10 +516,12 @@ class HomePage extends Component {
 
     const fixturesData = this.state.fixturesData ||[]
 
+    const currentGW = this.state.latestGameWeekPlayed||1
+
     const filteredFixtures =
       fixturesData &&
       fixturesData.length &&
-      fixturesData.filter((m) => m.event > 15 && m.event <= 15 + 5) ||[{}];
+      fixturesData.filter((m) => m.event > currentGW && m.event <= currentGW + 5) ||[{}];
     const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
     console.log("#############", teamId, teamData, filteredFixtures);
     const result = teamData
@@ -712,7 +684,6 @@ class HomePage extends Component {
                             valueLabelDisplay="on"
                             value={selectedGameWeek}
                             aria-label="Default"
-                            // valueLabelDisplay="auto"
                             max={latestGameWeekPlayed || 38}
                             name={"gameWeekSlider"}
                             onChange={(e) =>
