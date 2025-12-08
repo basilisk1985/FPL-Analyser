@@ -424,7 +424,6 @@ class HomePage extends Component {
     );
   };
 
-  getNextFixturesString = (teamId) => {};
 
   overallTableDataCreator = (playersDetails) => {
     const result = [];
@@ -509,6 +508,7 @@ class HomePage extends Component {
   };
 
   getNextFixturesDiv = (teamId) => {
+
     const fixtureDifficultyMatrix = [
       ,
       "#00641eff",
@@ -521,6 +521,7 @@ class HomePage extends Component {
       (m) => m.event > 15 && m.event <= 15 + 5
     );
     const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
+    console.log('#############', teamId,teamData,filteredFixtures )
     const result = teamData
       .sort((a, b) => a.event - b.event)
       .map((m) => (
@@ -547,7 +548,6 @@ class HomePage extends Component {
     ];
     console.log("State", this.state);
 
-    console.log("^^^^^^^^^^^^^^^", this.getNextFixturesString(1));
 
     const table = (
       <div style={{ marginTop: "2vh", minWidth: "60vw" }}>
