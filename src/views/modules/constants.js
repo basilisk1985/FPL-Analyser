@@ -163,7 +163,8 @@ const headerLabels = [
 ];
 
 const gameWeeksHeaders = {
-  web_name: "Player Name",  
+  web_name: "Player Name",
+  now_cost: "Cost",
   total_points: "Total Points",
   pts_average: "Points Per Match",
   minutes: "Total Mins",
@@ -305,5 +306,5 @@ export {
   allCapital,
   overallTableHeaders,
   headerLabels,
-  gameWeeksHeaders
+  gameWeeksHeaders,
 };

@@ -466,12 +466,15 @@ class HomePage extends Component {
       const rowData = playersDetails.map((c) => {
         const playersMetaData =
           this.getLabel(playersList, "id", c["id"], "meta") || {};
+          const playerPrice  = playersMetaData && playersMetaData.player && playersMetaData.player.now_cost ||0;
         const teamId =
           playersMetaData && playersMetaData.team && playersMetaData.team.id;
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
           ? this.getNextFixturesDiv(teamId)
+           : h === "now_cost"
+          ? playerPrice / 10
           : c[h];
       });
       const row = [header, ...rowData];
