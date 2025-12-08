@@ -465,12 +465,12 @@ class HomePage extends Component {
   };
 
   gameWeeksTableDataCreator = (playersDetails, playersList) => {
-    console.log("++++++++++", playersDetails);
     const result = [];
     const titles = Object.keys(gameWeeksHeaders);
     titles.forEach((h) => {
       const header = gameWeeksHeaders[h];
       const rowData = playersDetails.map((c) => {
+        console.log("++++++++++", playersDetails, playersList, c,this.getLabel(playersList, "id", c["id"], "team"));
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
