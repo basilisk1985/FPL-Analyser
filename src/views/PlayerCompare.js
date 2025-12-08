@@ -471,10 +471,12 @@ class HomePage extends Component {
       const header = gameWeeksHeaders[h];
       const rowData = playersDetails.map((c) => {
         console.log("++++++++++", playersDetails, playersList, c,this.getLabel(playersList, "id", c["id"], "meta"));
+        const playersMetaData = this.getLabel(playersList, "id", c["id"], "meta")||{};
+        const teamId = playersMetaData && playersMetaData.team && playersMetaData.team.id
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
-          ? this.getNextFixturesDiv(this.getLabel(playersList, "id", c["id"], "meta").team.id)
+          ? this.getNextFixturesDiv(teamId)
           : c[h];
       });
       const row = [header, ...rowData];
