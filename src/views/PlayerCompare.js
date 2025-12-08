@@ -60,9 +60,9 @@ class HomePage extends Component {
     }
   }
 
-   fetchFixtureData = () => {
-    const {  fixturesData } = this.state;
-    if ( !(fixturesData && fixturesData.length > 1)) {
+  fetchFixtureData = () => {
+    const { fixturesData } = this.state;
+    if (!(fixturesData && fixturesData.length > 1)) {
       // this.setState({ inProgress: true });
       fetch("/api/Fixtures_fpl")
         .then((res) => res.json())
@@ -353,7 +353,7 @@ class HomePage extends Component {
             latestGameWeekPlayed,
             ...response,
           });
-          this.fetchFixtureData()
+          this.fetchFixtureData();
         })
         .catch((err) => console.error(err));
     }
@@ -466,15 +466,19 @@ class HomePage extends Component {
       const rowData = playersDetails.map((c) => {
         const playersMetaData =
           this.getLabel(playersList, "id", c["id"], "meta") || {};
-          const playerPrice  = playersMetaData && playersMetaData.player && playersMetaData.player.now_cost ||0;
+        const playerPrice =
+          (playersMetaData &&
+            playersMetaData.player &&
+            playersMetaData.player.now_cost) ||
+          0;
         const teamId =
           playersMetaData && playersMetaData.team && playersMetaData.team.id;
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
           ? this.getNextFixturesDiv(teamId)
-           : h === "now_cost"
-          ? playerPrice / 10
+          : h === "now_cost"
+          ? playerPrice / 10 || ""
           : c[h];
       });
       const row = [header, ...rowData];
@@ -517,14 +521,15 @@ class HomePage extends Component {
       "#9c0702",
     ];
 
-    const fixturesData = this.state.fixturesData ||[]
+    const fixturesData = this.state.fixturesData || [];
 
-    const currentGW = this.state.latestGameWeekPlayed||1
+    const currentGW = this.state.latestGameWeekPlayed || 1;
 
-    const filteredFixtures =
-      fixturesData &&
+    const filteredFixtures = (fixturesData &&
       fixturesData.length &&
-      fixturesData.filter((m) => m.event > currentGW && m.event <= currentGW + 5) ||[{}];
+      fixturesData.filter(
+        (m) => m.event > currentGW && m.event <= currentGW + 5
+      )) || [{}];
     const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
     console.log("#############", teamId, teamData, filteredFixtures);
     const result = teamData
