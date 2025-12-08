@@ -474,7 +474,7 @@ class HomePage extends Component {
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
-          ? this.getNextFixturesDiv(this.getLabel(playersList, "id", c["id"], "team"))
+          ? this.getNextFixturesDiv(this.getLabel(playersList, "id", c["id"], "meta").team.id)
           : c[h];
       });
       const row = [header, ...rowData];
