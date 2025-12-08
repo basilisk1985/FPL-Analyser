@@ -68,7 +68,6 @@ class HomePage extends Component {
         .then((res) => res.json())
         .then((response) => {
           console.log("Fixtures : ", response);
-          return response
           this.setState({ fixturesData: response });
         })
         .catch((err) => console.error(err));
