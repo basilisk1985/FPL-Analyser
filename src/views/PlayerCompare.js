@@ -6,7 +6,7 @@ import AutoComplete from "./modules/PrimeAutoCompleteFullObject";
 import { gameWeeksHeaders, overallTableHeaders } from "./modules/constants";
 import { data } from "./data";
 import { GAME_WEEK_Data } from "./GWData";
-import { fixturesData } from "./fixturesData";
+// import { fixturesData } from "./fixturesData";
 import Box from "@mui/material/Box";
 import { Slider, InputLabel, Button } from "@mui/material";
 
@@ -60,22 +60,38 @@ class HomePage extends Component {
     }
   }
 
-  async fetchFixtureData(gw_id) {
-    try {
-      const res = await fetch(`/api/Fixtures_fpl`);
-      const data = await res.json();
-      console.log('___________', data)
-
-      this.setState({ fixturesData: data });
-      return data;
-    } catch (err) {
-      console.error("Error fetching GW:", gw_id, err);
-      throw err;
+   fetchFixtureData = () => {
+    const {  fixturesData } = this.state;
+    if ( !(fixturesData && fixturesData.length > 1)) {
+      // this.setState({ inProgress: true });
+      fetch("/api/Fixtures_fpl")
+        .then((res) => res.json())
+        .then((response) => {
+          console.log("Fixtures : ", response);
+          this.setState({ fixturesData: response });
+        })
+        .catch((err) => console.error(err));
     }
-  }
+  };
+
+
+  // async fetchFixtureData(gw_id) {
+  //   try {
+  //     const res = await fetch(`/api/Fixtures_fpl`);
+  //     const data = await res.json();
+  //     console.log('___________', data)
+
+  //     this.setState({ fixturesData: data });
+  //     return data;
+  //   } catch (err) {
+  //     console.error("Error fetching GW:", gw_id, err);
+  //     throw err;
+  //   }
+  // }
 
   comparePlayers = () => {
-    const filteredFixtures = fixturesData.filter(
+    const fixtures = this.state.fixturesData || [{}]
+    const filteredFixtures = fixtures.filter(
       (m) => m.event > 15 && m.event <= 15 + 5
     );
 
