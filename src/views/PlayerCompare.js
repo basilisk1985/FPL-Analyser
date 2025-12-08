@@ -158,8 +158,9 @@ class HomePage extends Component {
     console.log("Game Week Average Data : ", res);
   };
 
+  rounding = (num) => Math.round(num * 100) / 100;
+
   getDynamicAverages = (data, ids, gws) => {
-    const rounding = (num) => Math.round(num * 100) / 100;
     const uniqueGameweeks = [...new Set(gws)];
     console.log("creating average input", data, ids, uniqueGameweeks);
     const results = {};
@@ -176,7 +177,7 @@ class HomePage extends Component {
         if (player && player.stats) {
           // Loop over all keys in the stats object dynamically
           Object.entries(player.stats).forEach(([key, value]) => {
-            totals[key] = rounding(
+            totals[key] = this.rounding(
               (totals[key] || 0) +
                 (typeof value === "string" ? Number(value) : value)
             );
@@ -185,7 +186,7 @@ class HomePage extends Component {
         }
       });
       results[id] = totals;
-      const pts_per_match = rounding(
+      const pts_per_match = this.rounding(
         results[id].total_points / uniqueGameweeks.length
       );
       results[id] = { ...results[id], pts_average: pts_per_match };
@@ -471,11 +472,11 @@ class HomePage extends Component {
             playersMetaData.player &&
             playersMetaData.player.now_cost) ||
           0;
-          const pricePerCost = playerPrice? ` (${(c[h] * 10) / playerPrice} /£)` :''
+          const pricePerCost = playerPrice? ` (${this.rounding((c[h] * 10) / playerPrice)} /£)` :''
         const teamId =
           playersMetaData && playersMetaData.team && playersMetaData.team.id;
         return h === "total_points"
-          ? `${c[h]} (${pricePerCost}${pricePerCost})`
+          ? `${c[h]}${pricePerCost}`
           : h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
