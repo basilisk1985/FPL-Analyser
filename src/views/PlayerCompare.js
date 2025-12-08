@@ -473,7 +473,9 @@ class HomePage extends Component {
           0;
         const teamId =
           playersMetaData && playersMetaData.team && playersMetaData.team.id;
-        return h === "web_name"
+        return h === "total_points"
+          ? `${c[h]} (${c[h]/playerPrice}/£)`
+          : h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
           ? this.getNextFixturesDiv(teamId)
