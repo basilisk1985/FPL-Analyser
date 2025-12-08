@@ -6,6 +6,7 @@ import AutoComplete from "./modules/PrimeAutoCompleteFullObject";
 import { gameWeeksHeaders, overallTableHeaders } from "./modules/constants";
 import { data } from "./data";
 import { GAME_WEEK_Data } from "./GWData";
+import { fixturesData } from "./fixturesData";
 import Box from "@mui/material/Box";
 import { Slider, InputLabel, Button } from "@mui/material";
 
@@ -59,6 +60,15 @@ class HomePage extends Component {
   }
 
   comparePlayers = () => {
+    const filteredFixtures = fixturesData.filter(
+      (m) => m.event > 15 && m.event <= 15 + 5
+    );
+    console.log(
+      "^^^^^^^^^^^^^^^",
+      filteredFixtures,
+      this.getTeamNextFixtures(1, filteredFixtures)
+    );
+
     const { playersList, selectedPlayersObjectList } = this.state;
     console.log("%%%", selectedPlayersObjectList);
     const filteredData = [];
@@ -211,39 +221,43 @@ class HomePage extends Component {
   findTeamFullName = (teamId) =>
     this.getLabel(this.state.teams, "id", teamId, "name");
 
-  // fetchPlayersList = () => {
-  //   this.setState({ inProgress: true });
-  //   const playersList = data.elements; //Players
-  //   const events = data.events; //Players
-  //   const latestGameWeekPlayed = this.getLatestStartedGameweek(events)
-  //   const teamsList = data.teams;
-  //   const playerNamesList =
-  //     playersList && playersList.length > 0
-  //       ? // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
-  //         playersList.map((p) => ({
-  //           item: p.web_name,
-  //           description:
-  //             p.first_name +
-  //             " " +
-  //             p.second_name +
-  //             " (" +
-  //             this.getLabel(teamsList, "id", p.team, "short_name") +
-  //             ") ",
-  //           id: p.id,
-  //           meta: {
-  //             team: teamsList.find((i) => i["id"] === p.team) || {},
-  //             player: p,
-  //           },
-  //         }))
-  //       : [{}];
-  //   this.setState({
-  //     inProgress: false,
-  //     playersList: playersList,
-  //     playerNamesList: playerNamesList,
-  //     teamsList: teamsList,
-  //     latestGameWeekPlayed
-  //   });
-  // };
+  findTeamShortName = (teamId) =>
+    this.getLabel(this.state.teams, "id", teamId, "short_name");
+/*
+  fetchPlayersList = () => {
+    this.setState({ inProgress: true });
+    const playersList = data.elements; //Players
+    const events = data.events; //Players
+    const latestGameWeekPlayed = this.getLatestStartedGameweek(events);
+    const teamsList = data.teams;
+    const playerNamesList =
+      playersList && playersList.length > 0
+        ? // playersList.map(p=> ({item:p.web_name,description: p.first_name+' '+p.second_name})): [{}]
+          playersList.map((p) => ({
+            item: p.web_name,
+            description:
+              p.first_name +
+              " " +
+              p.second_name +
+              " (" +
+              this.getLabel(teamsList, "id", p.team, "short_name") +
+              ") ",
+            id: p.id,
+            meta: {
+              team: teamsList.find((i) => i["id"] === p.team) || {},
+              player: p,
+            },
+          }))
+        : [{}];
+    this.setState({
+      inProgress: false,
+      playersList: playersList,
+      playerNamesList: playerNamesList,
+      teamsList: teamsList,
+      latestGameWeekPlayed,
+      ...data,
+    });
+  };*/
 
   //   // axios
   //   // .get("https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static")
@@ -306,6 +320,7 @@ class HomePage extends Component {
   //   }
   // };
 
+  
   fetchPlayersList = () => {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
@@ -347,6 +362,7 @@ class HomePage extends Component {
         .catch((err) => console.error(err));
     }
   };
+ 
 
   addRank = (val, rank) => (val ? `${val} ( ${rank}th )` : "");
 
@@ -408,6 +424,8 @@ class HomePage extends Component {
     );
   };
 
+  getNextFixturesString = (teamId) => {};
+
   overallTableDataCreator = (playersDetails) => {
     const result = [];
     const titles = Object.keys(overallTableHeaders);
@@ -437,6 +455,8 @@ class HomePage extends Component {
           ? c["transfers_in"] - c["transfers_out"]
           : h === "transfers_in_event"
           ? c["transfers_in_event"] - c["transfers_out_event"]
+          : overallTableHeaders[h] === "Fixtures"
+          ? this.getNextFixturesDiv(c["team"])
           : c[h];
       });
       const row = [header, ...rowData];
@@ -454,6 +474,8 @@ class HomePage extends Component {
       const rowData = playersDetails.map((c) => {
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
+          : h === "fixtures"
+          ? this.getNextFixturesDiv(this.getLabel(playersList, "id", c["id"], "team"))
           : c[h];
       });
       const row = [header, ...rowData];
@@ -465,6 +487,48 @@ class HomePage extends Component {
   findDataByField = (data, fieldName) => {
     const dataArray = data || {};
     return dataArray[fieldName] || "";
+  };
+
+  getTeamNextFixtures = (teamId, filteredFixturesData = []) => {
+    const filterdData = filteredFixturesData.filter(
+      (fd) => fd.team_a == teamId || fd.team_h == teamId
+    );
+
+    console.log(filterdData);
+
+    return filterdData.map((fd) => ({
+      homeAway: fd.team_a == fd.teamId ? "A" : "H",
+      opponent:
+        fd.team_a == teamId
+          ? this.findTeamShortName(fd.team_h)
+          : this.findTeamShortName(fd.team_a),
+      // opponent: fd.team_a == teamId ? (fd.team_h) : (fd.team_a),
+      difficulty:
+        fd.team_a == teamId ? fd.team_a_difficulty : fd.team_h_difficulty,
+    }));
+  };
+
+  getNextFixturesDiv = (teamId) => {
+    const fixtureDifficultyMatrix = [
+      ,
+      "#00641eff",
+      "#02f21a",
+      "white",
+      "#f82a23ff",
+      "#9c0702",
+    ];
+    const filteredFixtures = fixturesData.filter(
+      (m) => m.event > 15 && m.event <= 15 + 5
+    );
+    const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
+    const result = teamData
+      .sort((a, b) => a.event - b.event)
+      .map((m) => (
+        <div
+          style={{ color: fixtureDifficultyMatrix[m.difficulty] , fontWeight: 500}}
+        >{`${m.opponent}(${m.homeAway})`}</div>
+      ));
+    return result;
   };
 
   render = () => {
@@ -482,6 +546,8 @@ class HomePage extends Component {
       {},
     ];
     console.log("State", this.state);
+
+    console.log("^^^^^^^^^^^^^^^", this.getNextFixturesString(1));
 
     const table = (
       <div style={{ marginTop: "2vh", minWidth: "60vw" }}>

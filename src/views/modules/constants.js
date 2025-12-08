@@ -192,7 +192,7 @@ const gameWeeksHeaders = {
   saves: "Saves",
   goals_conceded: "Goals Conceded",
   expected_goals_conceded: "XGC",
-  // in_dreamteam: false,
+  fixtures: "Fixtures",
 };
 
 const overallTableHeaders = {
@@ -257,6 +257,7 @@ const overallTableHeaders = {
   chance_of_playing_next_round: "Playing Next Round",
   transfers_in: "Transfers Balance",
   transfers_in_event: "Transfers Balance GW",
+  fixtures: "Fixtures",
   // transfers_out: "Trasnfers Out",
   // transfers_out_event: "Transfers Out GW",
   // threat_rank_type : "" ,
