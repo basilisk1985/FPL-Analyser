@@ -158,7 +158,7 @@ class HomePage extends Component {
     console.log("Game Week Average Data : ", res);
   };
 
-  rounding = (num) => Math.round(num * 100) / 100;
+  rounding = (num) => (num ? Math.round(num * 100) / 100 : 0);
 
   getDynamicAverages = (data, ids, gws) => {
     const uniqueGameweeks = [...new Set(gws)];
@@ -472,9 +472,15 @@ class HomePage extends Component {
             playersMetaData.player &&
             playersMetaData.player.now_cost) ||
           0;
-          const pricePerCost = playerPrice? ` (${this.rounding((c[h] * 10) / playerPrice)} /£)` :''
+        const pricePerCost = playerPrice
+          ? ` (${this.rounding((c[h] * 10) / playerPrice)} /£)`
+          : "";
         const teamId =
           playersMetaData && playersMetaData.team && playersMetaData.team.id;
+        const noOfNintyMins = c["minutes"] ? c["minutes"] / 90 : 0;
+        const defconPerNinty = this.rounding(
+          c["defensive_contribution"] / noOfNintyMins
+        );
         return h === "total_points"
           ? `${c[h]}${pricePerCost}`
           : h === "web_name"
@@ -483,6 +489,8 @@ class HomePage extends Component {
           ? this.getNextFixturesDiv(teamId)
           : h === "now_cost"
           ? playerPrice / 10 || ""
+          : h === "defensive_contribution"
+          ? `${c[h]} (${defconPerNinty} /90)`
           : c[h];
       });
       const row = [header, ...rowData];
