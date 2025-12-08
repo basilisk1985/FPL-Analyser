@@ -471,10 +471,11 @@ class HomePage extends Component {
             playersMetaData.player &&
             playersMetaData.player.now_cost) ||
           0;
+          const pricePerCost = playerPrice? ` (${(c[h] * 10) / playerPrice} /£)` :''
         const teamId =
           playersMetaData && playersMetaData.team && playersMetaData.team.id;
         return h === "total_points"
-          ? `${c[h]} (${(c[h] * 10) / playerPrice}/£)`
+          ? `${c[h]} (${pricePerCost}${pricePerCost})`
           : h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
@@ -533,7 +534,6 @@ class HomePage extends Component {
         (m) => m.event > currentGW && m.event <= currentGW + 5
       )) || [{}];
     const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
-    console.log("#############", teamId, teamData, filteredFixtures);
     const result = teamData
       .sort((a, b) => a.event - b.event)
       .map((m) => (
