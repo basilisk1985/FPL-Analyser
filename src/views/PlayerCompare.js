@@ -472,8 +472,11 @@ class HomePage extends Component {
             playersMetaData.player &&
             playersMetaData.player.now_cost) ||
           0;
-        const pricePerCost = playerPrice
-          ? ` (${this.rounding((c[h] * 10) / playerPrice)} /£)`
+        const ptsPerCost = playerPrice
+          ? ` (${this.rounding((c["total_points"] * 10) / playerPrice)} /£)`
+          : "";
+          const ptsPerGamePerCost = playerPrice
+          ? ` (${this.rounding((c["pts_average"] * 10) / playerPrice)} /£)`
           : "";
         const teamId =
           playersMetaData && playersMetaData.team && playersMetaData.team.id;
@@ -482,7 +485,9 @@ class HomePage extends Component {
           c["defensive_contribution"] / noOfNintyMins
         );
         return h === "total_points"
-          ? `${c[h]}${pricePerCost}`
+          ? `${c[h]}${ptsPerCost}`
+         :h === "pts_average"
+          ? `${c[h]}${ptsPerGamePerCost}`
           : h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
