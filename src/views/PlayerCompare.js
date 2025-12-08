@@ -23,6 +23,7 @@ class HomePage extends Component {
 
   componentDidMount() {
     this.fetchPlayersList();
+    this.fetchFixtureData()
   }
 
   // fetchGameWeekAPI = useCallback(async (gw_id) => {
@@ -59,14 +60,23 @@ class HomePage extends Component {
     }
   }
 
+  async fetchFixtureData(gw_id) {
+    try {
+      const res = await fetch(`/api/Fixtures_fpl`);
+      const data = await res.json();
+      console.log('___________', data)
+
+      this.setState({ fixturesData: data });
+      return data;
+    } catch (err) {
+      console.error("Error fetching GW:", gw_id, err);
+      throw err;
+    }
+  }
+
   comparePlayers = () => {
     const filteredFixtures = fixturesData.filter(
       (m) => m.event > 15 && m.event <= 15 + 5
-    );
-    console.log(
-      "^^^^^^^^^^^^^^^",
-      filteredFixtures,
-      this.getTeamNextFixtures(1, filteredFixtures)
     );
 
     const { playersList, selectedPlayersObjectList } = this.state;
@@ -223,7 +233,7 @@ class HomePage extends Component {
 
   findTeamShortName = (teamId) =>
     this.getLabel(this.state.teams, "id", teamId, "short_name");
-/*
+  /*
   fetchPlayersList = () => {
     this.setState({ inProgress: true });
     const playersList = data.elements; //Players
@@ -320,7 +330,6 @@ class HomePage extends Component {
   //   }
   // };
 
-  
   fetchPlayersList = () => {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
@@ -362,7 +371,6 @@ class HomePage extends Component {
         .catch((err) => console.error(err));
     }
   };
- 
 
   addRank = (val, rank) => (val ? `${val} ( ${rank}th )` : "");
 
@@ -424,7 +432,6 @@ class HomePage extends Component {
     );
   };
 
-
   overallTableDataCreator = (playersDetails) => {
     const result = [];
     const titles = Object.keys(overallTableHeaders);
@@ -470,9 +477,10 @@ class HomePage extends Component {
     titles.forEach((h) => {
       const header = gameWeeksHeaders[h];
       const rowData = playersDetails.map((c) => {
-        console.log("++++++++++", playersDetails, playersList, c,this.getLabel(playersList, "id", c["id"], "meta"));
-        const playersMetaData = this.getLabel(playersList, "id", c["id"], "meta")||{};
-        const teamId = playersMetaData && playersMetaData.team && playersMetaData.team.id
+        const playersMetaData =
+          this.getLabel(playersList, "id", c["id"], "meta") || {};
+        const teamId =
+          playersMetaData && playersMetaData.team && playersMetaData.team.id;
         return h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
@@ -490,7 +498,7 @@ class HomePage extends Component {
     return dataArray[fieldName] || "";
   };
 
-  getTeamNextFixtures = (teamId, filteredFixturesData = []) => {
+  getTeamNextFixtures = (teamId, filteredFixturesData = [{}]) => {
     const filterdData = filteredFixturesData.filter(
       (fd) => fd.team_a == teamId || fd.team_h == teamId
     );
@@ -503,14 +511,13 @@ class HomePage extends Component {
         fd.team_a == teamId
           ? this.findTeamShortName(fd.team_h)
           : this.findTeamShortName(fd.team_a),
-      // opponent: fd.team_a == teamId ? (fd.team_h) : (fd.team_a),
       difficulty:
         fd.team_a == teamId ? fd.team_a_difficulty : fd.team_h_difficulty,
+      event: fd.event,
     }));
   };
 
   getNextFixturesDiv = (teamId) => {
-
     const fixtureDifficultyMatrix = [
       ,
       "#00641eff",
@@ -519,17 +526,24 @@ class HomePage extends Component {
       "#f82a23ff",
       "#9c0702",
     ];
-    const filteredFixtures = fixturesData.filter(
-      (m) => m.event > 15 && m.event <= 15 + 5
-    );
+
+    const fixturesData = this.state.fixturesData ||[]
+
+    const filteredFixtures =
+      fixturesData &&
+      fixturesData.length &&
+      fixturesData.filter((m) => m.event > 15 && m.event <= 15 + 5) ||[{}];
     const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
-    console.log('#############', teamId,teamData,filteredFixtures )
+    console.log("#############", teamId, teamData, filteredFixtures);
     const result = teamData
       .sort((a, b) => a.event - b.event)
       .map((m) => (
         <div
-          style={{ color: fixtureDifficultyMatrix[m.difficulty] , fontWeight: 500}}
-        >{`${m.opponent}(${m.homeAway})`}</div>
+          style={{
+            color: fixtureDifficultyMatrix[m.difficulty],
+            fontWeight: 500,
+          }}
+        >{`${m.event} - ${m.opponent}(${m.homeAway})`}</div>
       ));
     return result;
   };
@@ -549,7 +563,6 @@ class HomePage extends Component {
       {},
     ];
     console.log("State", this.state);
-
 
     const table = (
       <div style={{ marginTop: "2vh", minWidth: "60vw" }}>
