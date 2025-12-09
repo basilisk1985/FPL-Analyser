@@ -167,6 +167,9 @@ class HomePage extends Component {
   rounding = (num) =>
     num && typeof num === "number" ? Math.round(num * 100) / 100 : 0;
 
+  rounding1DP = (num) =>
+    num && typeof num === "number" ? Math.floor(num * 10) / 10 : 0;
+
   getDynamicAverages = (data, ids, gws) => {
     const uniqueGameweeks = [...new Set(gws)];
     console.log("creating average input", data, ids, uniqueGameweeks);
@@ -607,7 +610,7 @@ class HomePage extends Component {
     const result = teamData
       .sort((a, b) => a.event - b.event)
       .map((m) => {
-        const gwXpts = this.rounding(this.getPlayerXpts(playerId, m.difficulty ))
+        const gwXpts = this.rounding1DP(this.getPlayerXpts(playerId, m.difficulty ))
         totalXpts += gwXpts
        const res= <div
           style={{
@@ -617,7 +620,7 @@ class HomePage extends Component {
         >{`${m.event} - ${m.opponent}(${m.homeAway}) (${gwXpts})`}</div>
         return res
       });
-      result.push(<div>{`Total XPts: ${this.rounding(totalXpts)||0}`}</div>)
+      result.push(<div>{`Total XPts: ${this.rounding1DP(totalXpts)||0}`}</div>)
     return result;
   };
 
