@@ -596,6 +596,8 @@ class HomePage extends Component {
 
     const currentGW = this.state.latestGameWeekPlayed || 1;
 
+    let totalXpts = 0
+
     const filteredFixtures = (fixturesData &&
       fixturesData.length &&
       fixturesData.filter(
@@ -604,24 +606,23 @@ class HomePage extends Component {
     const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
     const result = teamData
       .sort((a, b) => a.event - b.event)
-      .map((m) => (
-        <div
+      .map((m) => {
+        const gwXpts = this.rounding(this.getPlayerXpts(playerId, m.difficulty ))
+        totalXpts += gwXpts
+       const res= <div
           style={{
             color: fixtureDifficultyMatrix[m.difficulty],
             fontWeight: 500,
           }}
-        >{`${m.event} - ${m.opponent}(${m.homeAway}) (${this.getPlayerXpts(
-          playerId,
-          m.difficulty
-        )})`}</div>
-      ));
+        >{`${m.event} - ${m.opponent}(${m.homeAway}) (${gwXpts})`}</div>
+        return res
+      });
+      result.push(<div>{`Total XPts: ${totalXpts}`}</div>)
     return result;
   };
 
   getPlayerXpts = (playerId = 0, difficulty) => {
     const playerModelData = modelData[playerId]||{};
-
-    console.log("_____________",playerModelData)
 
     const xpts =
       playerModelData["a"] * difficulty * difficulty +
