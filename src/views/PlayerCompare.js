@@ -5,10 +5,14 @@ import Grid from "@mui/material/Grid2";
 import AutoComplete from "./modules/PrimeAutoCompleteFullObject";
 import { gameWeeksHeaders, overallTableHeaders } from "./modules/constants";
 import { data } from "./data";
+import { modelData } from "./constants/popular_player_models_weighted";
 import { GAME_WEEK_Data } from "./GWData";
 // import { fixturesData } from "./fixturesData";
 import Box from "@mui/material/Box";
 import { Slider, InputLabel, Button } from "@mui/material";
+
+  // let env = 'LOCAL'
+  let env = 'PROD'
 
 class HomePage extends Component {
   state = {
@@ -20,6 +24,8 @@ class HomePage extends Component {
     // gameWeekData: GAME_WEEK_Data,
     gameWeeksAveragePlayersData: [{}],
   };
+
+
 
   componentDidMount() {
     this.fetchPlayersList();
@@ -158,7 +164,8 @@ class HomePage extends Component {
     console.log("Game Week Average Data : ", res);
   };
 
-  rounding = (num) => (num ? Math.round(num * 100) / 100 : 0);
+  rounding = (num) =>
+    num && typeof num === "number" ? Math.round(num * 100) / 100 : 0;
 
   getDynamicAverages = (data, ids, gws) => {
     const uniqueGameweeks = [...new Set(gws)];
@@ -220,8 +227,9 @@ class HomePage extends Component {
 
   findTeamShortName = (teamId) =>
     this.getLabel(this.state.teams, "id", teamId, "short_name");
-  /*
+
   fetchPlayersList = () => {
+   if (env === 'LOCAL'){ 
     this.setState({ inProgress: true });
     const playersList = data.elements; //Players
     const events = data.events; //Players
@@ -253,8 +261,51 @@ class HomePage extends Component {
       teamsList: teamsList,
       latestGameWeekPlayed,
       ...data,
-    });
-  };*/
+    });}
+    else if (env==='PROD'){
+    const { inProgress, playersList } = this.state;
+    if (!inProgress && !(playersList && playersList.length > 1)) {
+      this.setState({ inProgress: true });
+      fetch("/api/overal_fpl_data")
+        .then((res) => res.json())
+        .then((response) => {
+          console.log("START : ", response);
+          const playersList = response.elements;
+          const teamsList = response.teams;
+          const events = data.events; //Players
+          const latestGameWeekPlayed = this.getLatestStartedGameweek(events);
+          const playerNamesList =
+            playersList && playersList.length > 0
+              ? playersList.map((p) => ({
+                  item: p.web_name,
+                  description:
+                    p.first_name +
+                    " " +
+                    p.second_name +
+                    " (" +
+                    this.getLabel(teamsList, "id", p.team, "short_name") +
+                    ") ",
+                  id: p.id,
+                  meta: {
+                    team: teamsList.find((i) => i["id"] === p.team) || {},
+                    player: p,
+                  },
+                }))
+              : [{}];
+          this.setState({
+            inProgress: false,
+            playersList: playersList,
+            playerNamesList: playerNamesList,
+            latestGameWeekPlayed,
+            ...response,
+          });
+          this.fetchFixtureData();
+        })
+        .catch((err) => console.error(err));
+    }
+  }
+  else return 
+  };
 
   //   // axios
   //   // .get("https://api.allorigins.win/raw?url=https://fantasy.premierleague.com/api/bootstrap-static")
@@ -316,7 +367,8 @@ class HomePage extends Component {
   //       });
   //   }
   // };
-
+   
+  /*
   fetchPlayersList = () => {
     const { inProgress, playersList } = this.state;
     if (!inProgress && !(playersList && playersList.length > 1)) {
@@ -359,6 +411,7 @@ class HomePage extends Component {
         .catch((err) => console.error(err));
     }
   };
+*/
 
   addRank = (val, rank) => (val ? `${val} ( ${rank}th )` : "");
 
@@ -450,7 +503,7 @@ class HomePage extends Component {
           : h === "transfers_in_event"
           ? c["transfers_in_event"] - c["transfers_out_event"]
           : overallTableHeaders[h] === "Fixtures"
-          ? this.getNextFixturesDiv(c["team"])
+          ? this.getNextFixturesDiv(c["team"], c["id"])
           : c[h];
       });
       const row = [header, ...rowData];
@@ -475,7 +528,7 @@ class HomePage extends Component {
         const ptsPerCost = playerPrice
           ? ` (${this.rounding((c["total_points"] * 10) / playerPrice)} /£)`
           : "";
-          const ptsPerGamePerCost = playerPrice
+        const ptsPerGamePerCost = playerPrice
           ? ` (${this.rounding((c["pts_average"] * 10) / playerPrice)} /£)`
           : "";
         const teamId =
@@ -486,12 +539,12 @@ class HomePage extends Component {
         );
         return h === "total_points"
           ? `${c[h]}${ptsPerCost}`
-         :h === "pts_average"
+          : h === "pts_average"
           ? `${c[h]}${ptsPerGamePerCost}`
           : h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
           : h === "fixtures"
-          ? this.getNextFixturesDiv(teamId)
+          ? this.getNextFixturesDiv(teamId, c["id"])
           : h === "now_cost"
           ? playerPrice / 10 || ""
           : h === "defensive_contribution"
@@ -528,7 +581,8 @@ class HomePage extends Component {
     }));
   };
 
-  getNextFixturesDiv = (teamId) => {
+  getNextFixturesDiv = (teamId, playerId) => {
+    console.log("//////////", playerId);
     const fixtureDifficultyMatrix = [
       ,
       "#00641eff",
@@ -556,9 +610,25 @@ class HomePage extends Component {
             color: fixtureDifficultyMatrix[m.difficulty],
             fontWeight: 500,
           }}
-        >{`${m.event} - ${m.opponent}(${m.homeAway})`}</div>
+        >{`${m.event} - ${m.opponent}(${m.homeAway}) (${this.getPlayerXpts(
+          playerId,
+          m.difficulty
+        )})`}</div>
       ));
     return result;
+  };
+
+  getPlayerXpts = (playerId = 0, difficulty) => {
+    const playerModelData = modelData[playerId]||{};
+
+    console.log("_____________",playerModelData)
+
+    const xpts =
+      playerModelData["a"] * difficulty * difficulty +
+      playerModelData["b"] * difficulty +
+      playerModelData["c"];
+    console.log(playerId, difficulty, xpts);
+    return xpts;
   };
 
   render = () => {
