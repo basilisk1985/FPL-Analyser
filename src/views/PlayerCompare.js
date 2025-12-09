@@ -617,7 +617,7 @@ class HomePage extends Component {
         >{`${m.event} - ${m.opponent}(${m.homeAway}) (${gwXpts})`}</div>
         return res
       });
-      result.push(<div>{`Total XPts: ${totalXpts}`}</div>)
+      result.push(<div>{`Total XPts: ${this.rounding(totalXpts)||0}`}</div>)
     return result;
   };
 
