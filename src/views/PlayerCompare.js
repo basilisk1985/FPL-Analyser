@@ -11,8 +11,8 @@ import { GAME_WEEK_Data } from "./GWData";
 import Box from "@mui/material/Box";
 import { Slider, InputLabel, Button } from "@mui/material";
 
-  // let env = 'LOCAL'
-  let env = 'PROD'
+  let env = 'LOCAL'
+  // let env = 'PROD'
 
 class HomePage extends Component {
   state = {
@@ -502,8 +502,8 @@ class HomePage extends Component {
           ? c["transfers_in"] - c["transfers_out"]
           : h === "transfers_in_event"
           ? c["transfers_in_event"] - c["transfers_out_event"]
-          : overallTableHeaders[h] === "Fixtures"
-          ? this.getNextFixturesDiv(c["team"], c["id"])
+          // : overallTableHeaders[h] === "Fixtures"
+          // ? this.getNextFixturesDiv(c["team"], c["id"])
           : c[h];
       });
       const row = [header, ...rowData];
@@ -543,8 +543,10 @@ class HomePage extends Component {
           ? `${c[h]}${ptsPerGamePerCost}`
           : h === "web_name"
           ? this.getLabel(playersList, "id", c["id"], "item")
-          : h === "fixtures"
-          ? this.getNextFixturesDiv(teamId, c["id"])
+          // : h === "fixtures"
+          // ? this.getNextFixturesDiv(teamId, c["id"])          
+          : overallTableHeaders[h] === "Performance"
+          ? this.getRecentFixtures(playersDetails, playersList)
           : h === "now_cost"
           ? playerPrice / 10 || ""
           : h === "defensive_contribution"
@@ -556,6 +558,10 @@ class HomePage extends Component {
     });
     return result;
   };
+
+  getRecentFixtures = (a,b) =>{
+    console.log('^^^^^^^^^^^^',a,b)
+  }
 
   findDataByField = (data, fieldName) => {
     const dataArray = data || {};
@@ -581,45 +587,45 @@ class HomePage extends Component {
     }));
   };
 
-  getNextFixturesDiv = (teamId, playerId) => {
-    console.log("//////////", playerId);
-    const fixtureDifficultyMatrix = [
-      ,
-      "#00641eff",
-      "#02f21a",
-      "white",
-      "#f82a23ff",
-      "#9c0702",
-    ];
+  // getNextFixturesDiv = (teamId, playerId) => {
+  //   console.log("//////////", playerId);
+  //   const fixtureDifficultyMatrix = [
+  //     ,
+  //     "#00641eff",
+  //     "#02f21a",
+  //     "white",
+  //     "#f82a23ff",
+  //     "#9c0702",
+  //   ];
 
-    const fixturesData = this.state.fixturesData || [];
+  //   const fixturesData = this.state.fixturesData || [];
 
-    const currentGW = this.state.latestGameWeekPlayed || 1;
+  //   const currentGW = this.state.latestGameWeekPlayed || 1;
 
-    let totalXpts = 0
+  //   let totalXpts = 0
 
-    const filteredFixtures = (fixturesData &&
-      fixturesData.length &&
-      fixturesData.filter(
-        (m) => m.event > currentGW && m.event <= currentGW + 5
-      )) || [{}];
-    const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
-    const result = teamData
-      .sort((a, b) => a.event - b.event)
-      .map((m) => {
-        const gwXpts = this.rounding(this.getPlayerXpts(playerId, m.difficulty ))
-        totalXpts += gwXpts
-       const res= <div
-          style={{
-            color: fixtureDifficultyMatrix[m.difficulty],
-            fontWeight: 500,
-          }}
-        >{`${m.event} - ${m.opponent}(${m.homeAway}) (${gwXpts})`}</div>
-        return res
-      });
-      result.push(<div>{`Total XPts: ${this.rounding(totalXpts)||0}`}</div>)
-    return result;
-  };
+  //   const filteredFixtures = (fixturesData &&
+  //     fixturesData.length &&
+  //     fixturesData.filter(
+  //       (m) => m.event > currentGW && m.event <= currentGW + 5
+  //     )) || [{}];
+  //   const teamData = this.getTeamNextFixtures(teamId, filteredFixtures) || [{}];
+  //   const result = teamData
+  //     .sort((a, b) => a.event - b.event)
+  //     .map((m) => {
+  //       const gwXpts = this.rounding(this.getPlayerXpts(playerId, m.difficulty ))
+  //       totalXpts += gwXpts
+  //      const res= <div
+  //         style={{
+  //           color: fixtureDifficultyMatrix[m.difficulty],
+  //           fontWeight: 500,
+  //         }}
+  //       >{`${m.event} - ${m.opponent}(${m.homeAway}) (${gwXpts})`}</div>
+  //       return res
+  //     });
+  //     result.push(<div>{`Total XPts: ${this.rounding(totalXpts)||0}`}</div>)
+  //   return result;
+  // };
 
   getPlayerXpts = (playerId = 0, difficulty) => {
     const playerModelData = modelData[playerId]||{};
