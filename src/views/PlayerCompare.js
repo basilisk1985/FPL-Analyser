@@ -174,7 +174,7 @@ class HomePage extends Component {
     ids.forEach((id) => {
       let totals = {};
       let counts = 0;
-      let points = {}
+      let points = []
 
       uniqueGameweeks.forEach((gw) => {
         const gwData = data[gw.toString()];
@@ -185,7 +185,7 @@ class HomePage extends Component {
         if (player && player.stats) {
           const fixtureId = player?.explain[0]?.fixture
           const total_pts = player.stats.total_points
-          points= {fixtureId : total_pts}
+          points.push({[fixtureId] : total_pts})
           // Loop over all keys in the stats object dynamically
           Object.entries(player.stats).forEach(([key, value]) => {
             totals[key] = this.rounding(
