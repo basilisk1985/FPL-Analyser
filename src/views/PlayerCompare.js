@@ -174,6 +174,7 @@ class HomePage extends Component {
     ids.forEach((id) => {
       let totals = {};
       let counts = 0;
+      let points = {}
 
       uniqueGameweeks.forEach((gw) => {
         const gwData = data[gw.toString()];
@@ -182,6 +183,9 @@ class HomePage extends Component {
 
         const player = gwPlayersData.find((p) => p.id === id);
         if (player && player.stats) {
+          const fixtureId = player?.explain[0]?.fixture
+          const total_pts = player.stats.total_points
+          points= {fixtureId : total_pts}
           // Loop over all keys in the stats object dynamically
           Object.entries(player.stats).forEach(([key, value]) => {
             totals[key] = this.rounding(
@@ -196,7 +200,7 @@ class HomePage extends Component {
       const pts_per_match = this.rounding(
         results[id].total_points / uniqueGameweeks.length
       );
-      results[id] = { ...results[id], pts_average: pts_per_match };
+      results[id] = { ...results[id], pts_average: pts_per_match, points: points };
     });
 
     const flattenedResults = ids.map((id) => ({ ...results[id], id: id }));
