@@ -193,7 +193,8 @@ const gameWeeksHeaders = {
   saves: "Saves",
   goals_conceded: "Goals Conceded",
   expected_goals_conceded: "XGC",
-  fixtures: "Fixtures",
+  // fixtures: "Fixtures",
+  Performance: "Performance",
 };
 
 const overallTableHeaders = {
