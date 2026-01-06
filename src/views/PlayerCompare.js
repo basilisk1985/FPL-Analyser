@@ -11,8 +11,8 @@ import { GAME_WEEK_Data } from "./GWData";
 import Box from "@mui/material/Box";
 import { Slider, InputLabel, Button } from "@mui/material";
 
-  let env = 'LOCAL'
-  // let env = 'PROD'
+  // let env = 'LOCAL'
+  let env = 'PROD'
 
 class HomePage extends Component {
   state = {
