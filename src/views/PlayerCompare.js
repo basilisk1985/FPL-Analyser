@@ -158,7 +158,8 @@ class HomePage extends Component {
     const res = this.getDynamicAverages(
       newGameWeekData,
       selectedPlayersIdList,
-      gwNumbers
+      gwNumbers,
+      selectedPlayersObjectList
     );
     this.setState({ gameWeeksAveragePlayersData: res, inProgress: false });
     console.log("Game Week Average Data : ", res);
@@ -167,9 +168,9 @@ class HomePage extends Component {
   rounding = (num) =>
     num && typeof num === "number" ? Math.round(num * 100) / 100 : 0;
 
-  getDynamicAverages = (data, ids, gws) => {
+  getDynamicAverages = (data, ids, gws, selectedPlayersObjectList) => {
     const uniqueGameweeks = [...new Set(gws)];
-    console.log("creating average input", data, ids, uniqueGameweeks);
+    console.log("creating average input", data, ids, uniqueGameweeks, selectedPlayersObjectList);
     const results = {};
     ids.forEach((id) => {
       let totals = {};
