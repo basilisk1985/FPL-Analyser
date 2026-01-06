@@ -545,7 +545,7 @@ class HomePage extends Component {
           ? this.getLabel(playersList, "id", c["id"], "item")
           // : h === "fixtures"
           // ? this.getNextFixturesDiv(teamId, c["id"])          
-          : overallTableHeaders[h] === "Performance"
+          : h === "Performance"
           ? this.getRecentFixtures(playersDetails, playersList)
           : h === "now_cost"
           ? playerPrice / 10 || ""
